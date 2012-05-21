@@ -1,80 +1,80 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"> 
-<head>
-	<meta charset="iso-8859-1" />
-	<title>Supercar Top Trumps</title>
-	<meta http-equiv="Content-Language" content="en-us" />
-	<meta name="description" content="" />
-	<meta name="keywords" content="" />
-	<meta name="author" content="Chris Barber" />
-	<meta name="Copyright" content="Chris Barber"/>
-	<link rel="stylesheet" href="css/import.css" type="text/css" />
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script> 
-	<script src="js/cars.js" type="text/javascript"></script> 
-	<script src="js/flags.js" type="text/javascript"></script>
-	<script type="text/javascript">
-	var images 	= new Array();
-	var flags 	= new Array();
-	
-	$(document).ready(function() {
-		
-		// preload all car images to increase speed of game
-		
-		for(var i = 0; i<cars.length; i++) {
-			images[i] 		= new Image();
-			images[i].src 	= "../images/cars/" + cars[i][0] + ".png";
-		}
-		
-		for(var i = 0; i<flags.length; i++) {
-			flags[i] 		= new Image();
-			flags[i].src 	= "../images/flags/" + flags[i][0] + ".png";
-		}
-		
-		$('#player1').click(function() {
-			if($('#p1name').val() == '' || $('#p1name').val().length > 10) {
-				alert("Please enter a valid name for Player 1 (maximum 10 characters)");
-				$('#p1name').focus();
-				return false;
-			}
-			location.href = "game.html?g=1&p1="+$('#p1name').val() + "&p2=Computer";
-		});
-		
-		$('#player2').click(function() {
-			if($('#p1name').val() == '' || $('#p1name').val().length > 10) {
-				alert("Please enter a valid name for Player 1 (maximum 10 characters)");
-				$('#p1name').focus();
-				return false;
-			}
-			if($('#p2name').val() == '' || $('#p2name').val().length > 10) {
-				alert("Please enter a valid name for Player 2 (maximum 10 characters)");
-				$('#p2name').focus();
-				return false;
-			}
-			if($('#p1name').val() == $('#p2name').val()) {
-				alert("Player 1 and Player 2 must have different names, try again.");
-				$('#p1name').focus();
-				return false;
-			}
-			location.href = "game.html?g=2&p1="+$('#p1name').val() + "&p2=" + $('#p2name').val();
-		});
-		
-	});
-	</script>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="iso-8859-1" />
+    <title>Supercar Top Trumps</title>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta name="author" content="Chris Barber" />
+    <meta name="Copyright" content="Chris Barber"/>
+    <link rel="stylesheet" href="css/import.css" type="text/css" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script src="js/cars.js" type="text/javascript"></script>
+    <script src="js/flags.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      var images = new Array();
+      var flags = new Array();
+
+      $(document).ready(function() {
+        // preload all car images to increase speed of game
+
+        for(var i = 0; i<cars.length; i++) {
+          images[i] = new Image();
+          images[i].src = "../images/cars/" + cars[i][0] + ".png";
+        }
+
+        for(var i = 0; i<flags.length; i++) {
+          flags[i] = new Image();
+          flags[i].src = "../images/flags/" + flags[i][0] + ".png";
+        }
+
+        $('#player1').click(function() {
+          if($('#p1name').val() == '' || $('#p1name').val().length > 10) {
+            alert("Please enter a valid name for Player 1 (maximum 10 characters)");
+            $('#p1name').focus();
+            return false;
+          }
+          location.href = "game.html?g=1&p1="+$('#p1name').val() + "&p2=Computer";
+        });
+
+        $('#player2').click(function() {
+          if($('#p1name').val() == '' || $('#p1name').val().length > 10) {
+            alert("Please enter a valid name for Player 1 (maximum 10 characters)");
+            $('#p1name').focus();
+            return false;
+          }
+          if($('#p2name').val() == '' || $('#p2name').val().length > 10) {
+            alert("Please enter a valid name for Player 2 (maximum 10 characters)");
+            $('#p2name').focus();
+            return false;
+          }
+          if($('#p1name').val() == $('#p2name').val()) {
+            alert("Player 1 and Player 2 must have different names, try again.");
+            $('#p1name').focus();
+            return false;
+          }
+          location.href = "game.html?g=2&p1="+$('#p1name').val() + "&p2=" + $('#p2name').val();
+        });
+      });
+  </script>
 </head>
 <body>
-	<div id="wrapper">
-		<h1>Supercar Top Trumps</h1>
-		<div id="intro">
-			<p>Supercar Top Trumps is a 1 or 2 player game. Each car has 5 statistics for a supercar - top speed, 0-60 time, power output, engine capacity and weight.</p>
-		
-			<p><label for="player1">Enter the 1st player's name</label>
-			<input type="text" name="player1" id="p1name" size="12" value="Player 1" >
-			<input value="Play against computer" id="player1" type="button"></p>
-			
-			<p><label for="player2">Enter the 2nd player's name</label>
-			<input type="text" name="player2" id="p2name"  size="12" value="" >
-			<input value="Play another opponent" id="player2" type="button"></p>
-		</div><!-- /intro -->
-	</div><!-- /wrapper -->
+  <div id="wrapper">
+    <h1>Supercar Top Trumps</h1>
+    <div id="intro">
+      <p>Supercar Top Trumps is a 1 or 2 player game. Each car has 5 statistics for a supercar - top speed, 0-60 time, power output, engine capacity and weight.</p>
+      <p>
+        <label for="player1">Enter the 1st player's name</label>
+        <input type="text" name="player1" id="p1name" size="12" value="Player 1" >
+        <input value="Play against computer" id="player1" type="button">
+      </p>
+      <p>
+        <label for="player2">Enter the 2nd player's name</label>
+        <input type="text" name="player2" id="p2name"  size="12" value="" >
+        <input value="Play another opponent" id="player2" type="button">
+      </p>
+    </div><!-- /intro -->
+  </div><!-- /wrapper -->
 </body>
 </html>
