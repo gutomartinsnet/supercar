@@ -112,13 +112,13 @@ function allocateCars(player, draw) { // e.g. allocateCars(1);
       for(i = 0; i < pot.length; i++) {
         player1.push(pot[i]);
       }
-      pot = new Array(); // clear the pot
+      pot = []; // clear the pot
     } else if (player == 2) {
       // player 2 is the winner
       for(i = 0; i < pot.length; i++) {
         player2.push(pot[i]);
       }
-      pot = new Array(); // clear the pot
+      pot = []; // clear the pot
     } else {
       // Something has gone horribly wrong
     }
