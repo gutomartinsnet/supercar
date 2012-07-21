@@ -21,32 +21,28 @@
     */
 
 // Set up Game variables from Params passed in URL
-var game = getURLParameter('g');
-var p1name = getURLParameter('p1');
-var p2name = getURLParameter('p2');
+var game = getURLParameter('g'),
+    p1name = getURLParameter('p1'),
+    p2name = getURLParameter('p2');
 
 // Set up arrays
-var player1 = []; // to hold p1's cars
-var player2 = []; // to hold p2's cars
-var pot = []; // to hold cars from both players before giving them to the winner
+var player1 = [], // to hold p1's cars
+    player2 = [], // to hold p2's cars
+    pot = [], // to hold cars from both players before giving them to the winner
+    countries = [];
 
-var countries = [];
-
-var player1score = 0; // score (number of games won)
-var player2score = 0; // score (number of games won)
-
-var currentplayer = 1;
-
-var carTimer;
-var compareTimer;
+var player1score = 0, // score (number of games won)
+    player2score = 0, // score (number of games won)
+    currentplayer = 1,
+    compareTimer,
+    carTimer;
 
 $(document).ready(function() {
 
   setupCountries();
   setupGame();
 
-  $('.stat').live('click', function() {
-    // Live handler called.
+  $('.stat').on('click', function() {
     chooseStat($(this).attr('id'));
   });
 });
@@ -59,20 +55,20 @@ function setupCountries() {
 }
 
 function compareCars(stat) {
-  var drawn = false;
-  var text = "";
+  var drawn = false,
+      text = "";
 
-  if(cars[player1[0]][stat] == cars[player2[0]][stat]) {
+  if (cars[player1[0]][stat] == cars[player2[0]][stat]) {
     drawn = true;
     text = "<p>Draw</p>";
-  } else if(stat == 3 || stat == 5 || stat == 6) {
+  } else if (stat == 3 || stat == 5 || stat == 6) {
     // Bigger Value is Better for these - Top Speed, BHP, Engine Size
     if (cars[player1[0]][stat] > cars[player2[0]][stat]) {
       currentplayer = 1;
     } else {
       currentplayer = 2;
     }
-  } else if(stat == 4 || stat == 7) {
+  } else if (stat == 4 || stat == 7) {
     // Smaller Value is Better for these - 0-60 Time, Weight
     if (cars[player1[0]][stat] < cars[player2[0]][stat]) {
       currentplayer = 1;
@@ -83,11 +79,11 @@ function compareCars(stat) {
   // allocate the cars (to the winner, or if a draw, then stick the car at the back)
   allocateCars(currentplayer, drawn);
 
-  if(currentplayer == 1 && !drawn) {
+  if (currentplayer == 1 && !drawn) {
     text = '<p class="left">Player 1 Wins</p>';
   }
 
-  if(currentplayer == 2 && !drawn) {
+  if (currentplayer == 2 && !drawn) {
     text = '<p class="right">Player 2 Wins</p>';
   }
 
@@ -96,7 +92,7 @@ function compareCars(stat) {
 }
 
 function allocateCars(player, draw) { // e.g. allocateCars(1);
-  if(draw) {
+  if (draw) {
     player1.push(player1.shift()); // put current card to back of the stack
     player2.push(player2.shift()); // put current card to back of the stack
   } else {
@@ -107,7 +103,7 @@ function allocateCars(player, draw) { // e.g. allocateCars(1);
     // .shift = removes the first element in the array and returns it.
     // . push = pushes object to end of array.
     // Combined = remove current card from the player and put it in the pot.
-    if(player == 1) {
+    if (player == 1) {
       // player 1 is the winner -- loop the pot and reassign the cars
       for(i = 0; i < pot.length; i++) {
         player1.push(pot[i]);
@@ -128,12 +124,12 @@ function allocateCars(player, draw) { // e.g. allocateCars(1);
 function chooseStat(stat) {
   if (currentplayer == 1) {
     showCar(1,0,stat);
-    var carTimer = setTimeout("showCar(2, 0, " + stat + ")",500);
-    var compareTimer = setTimeout('compareCars(' + stat + ')',1500);
+    var carTimer = setTimeout("showCar(2, 0, " + stat + ")",500),
+        compareTimer = setTimeout('compareCars(' + stat + ')',1500);
   } else {
     showCar(2,0,stat);
-    var carTimer = setTimeout("showCar(1, 0, " + stat + ")",500);
-    var compareTimer = setTimeout('compareCars(' + stat + ')',1500);
+    var carTimer = setTimeout("showCar(1, 0, " + stat + ")",500),
+        compareTimer = setTimeout('compareCars(' + stat + ')',1500);
   }
 }
 
@@ -141,7 +137,7 @@ function computerChooseStat() {
   // are any of the values 'good'?
   var chosen;
 
-  if(cars[player1[0]][3] > 199) {
+  if (cars[player1[0]][3] > 199) {
     // Top Speed
     chosen = 3;
   } else if (cars[player1[0]][4] < 4) {
@@ -158,7 +154,7 @@ function computerChooseStat() {
     chosen = 7;
   }
   // if not, are any of them 'ok'
-  else if(cars[player1[0]][3] > 180) {
+  else if (cars[player1[0]][3] > 180) {
     // Top Speed
     chosen = 3;
   } else if (cars[player1[0]][4] < 4.6) {
@@ -192,13 +188,13 @@ function setupGame() {
 
   if (game == 1) { clearTimeout(carTimer); clearTimeout(compareTimer); }
 
-  if(currentplayer == 1) {
+  if (currentplayer == 1) {
     // Show P1's Card, Hide P2's Card
     showCar(1,1,0);
     showBlank(2);
   } else {
     // Show P2's Card, Hide P1's Card
-    if(game == 1) {
+    if (game == 1) {
       showCar(2,0,0); // don't want interactive links for the computers turn! duh!
     } else {
       showCar(2,1,0);
@@ -227,19 +223,19 @@ function updateScore() {
 
   $('#p2score').html(p2score);
 
-  if(player1.length == 0) {
+  if (player1.length == 0) {
     // player 2 wins & player 1 loses
     player2score++;
-    if(confirm(p2name + " has won this game. Do you want to play again?")) {
+    if (confirm(p2name + " has won this game. Do you want to play again?")) {
       setupGame();
     } else {
       location.href = "index.html";
     }
 
-  } else if(player2.length == 0) {
+  } else if (player2.length == 0) {
     // player 1 wins & player 2 loses
     player1score++;
-    if(confirm(p1name + " has won this game. Do you want to play again?")) {
+    if (confirm(p1name + " has won this game. Do you want to play again?")) {
       setupGame();
     } else {
       location.href = "index.html";
@@ -248,12 +244,12 @@ function updateScore() {
     // still continue playing :)
   }
 
-  if(currentplayer == 1) {
+  if (currentplayer == 1) {
     // Player 1's Turn
     // Show P1's Card, Hide P2's Card
     showCar(1,1,0);
     showBlank(2);
-  } else if(currentplayer == 2) {
+  } else if (currentplayer == 2) {
     // Player 2's Turn
     // Show P2's Card, Hide P1's Card
     showCar(2,1,0);
@@ -262,7 +258,7 @@ function updateScore() {
 }
 
 function showBlank(player) {
-  if(player == 1) {
+  if (player == 1) {
     $('#p1card').html('');
   } else {
     $('#p2card').html('');
@@ -271,21 +267,21 @@ function showBlank(player) {
 
 function showCar(player, interactive, stat) {
   var carno;
-  if(player == 1) {
+  if (player == 1) {
     carno = player1[0];
   } else {
     carno = player2[0];
   }
 
   //Image Ref, Car Name, Car Country, Top Speed, 0-60, Power, Engine Size cc, Weight Kgs
-  var imageref = cars[carno][0];
-  var carname = cars[carno][1];
-  var country = countries[cars[carno][2]];
-  var topspeed = cars[carno][3];
-  var zerosixty = cars[carno][4];
-  var power = cars[carno][5];
-  var enginesize = cars[carno][6];
-  var weight = cars[carno][7];
+  var imageref = cars[carno][0],
+      carname = cars[carno][1],
+      country = countries[cars[carno][2]],
+      topspeed = cars[carno][3],
+      zerosixty = cars[carno][4],
+      power = cars[carno][5],
+      enginesize = cars[carno][6],
+      weight = cars[carno][7];
 
   var card = '<div class="country">\
              <p>'+country[1]+'</p>\
@@ -296,7 +292,7 @@ function showCar(player, interactive, stat) {
              <dl>\
              ';
 
-  if(interactive) {
+  if (interactive) {
     card += '<dt><a id="3" class="stat">Top Speed</a></dt>\
             <dd><a id="3" class="stat">'+topspeed+' mph</a></dd>\
             <dt><a id="4" class="stat">0 - 60 mph</a></dt>\
@@ -309,7 +305,7 @@ function showCar(player, interactive, stat) {
             <dd><a id="7" class="stat">'+weight+' Kg</a></dd>';
   } else {
     var classes = ['','','','',''];
-    if(stat > 0) {
+    if (stat > 0) {
       classes[stat-3] = 'selected';
     }
     card += '<dt class="'+classes[0]+'">Top Speed</dt>\
@@ -326,7 +322,7 @@ function showCar(player, interactive, stat) {
 
   card += '</dl>';
 
-  if(player == 1) {
+  if (player == 1) {
     $('#p1card').html(card);
   } else {
     $('#p2card').html(card);

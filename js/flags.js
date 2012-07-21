@@ -25,9 +25,9 @@
 var flags = [];
 
 // Image Ref, Country Name
-flags[0] = new Array("100", "GB");
-flags[1] = new Array("110", "GERMANY");
-flags[2] = new Array("120", "ITALY");
-flags[3] = new Array("130", "JAPAN");
-flags[4] = new Array("140", "SWEDEN");
-flags[5] = new Array("150", "USA");
+flags[0] = ["100", "GB"]
+flags[1] = ["110", "GERMANY"]
+flags[2] = ["120", "ITALY"]
+flags[3] = ["130", "JAPAN"]
+flags[4] = ["140", "SWEDEN"]
+flags[5] = ["150", "USA"]
