@@ -42,7 +42,7 @@ $(document).ready(function() {
   setupCountries();
   setupGame();
 
-  $('.stat').on('click', function() {
+  $('.stat').live('click', function() {
     chooseStat($(this).attr('id'));
   });
 });
