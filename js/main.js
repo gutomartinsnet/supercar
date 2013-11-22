@@ -42,7 +42,7 @@ $(document).ready(function() {
   setupCountries();
   setupGame();
 
-  $('.stat').live('click', function() {
+  $('#p1card').on('click', '.stat', null, function() {
     chooseStat($(this).attr('id'));
   });
 });
@@ -50,27 +50,29 @@ $(document).ready(function() {
 function setupCountries() {
   // did this so I can call countries[country ref] rather than looping the array everytime to find the right image ref
   for(var j = 0; j<flags.length; j++) {
-    countries[flags[j][0]] = flags[j];
+    countries[flags[j].image] = flags[j];
   }
 }
 
 function compareCars(stat) {
   var drawn = false,
-      text = "";
+      text = "",
+      carPlayer1 = cars[player1[0]],
+      carPlayer2 = cars[player2[0]];
 
-  if (cars[player1[0]][stat] == cars[player2[0]][stat]) {
+  if (carPlayer1[stat] == carPlayer2[stat]) {
     drawn = true;
     text = "<p>Draw</p>";
-  } else if (stat == 3 || stat == 5 || stat == 6) {
+  } else if (stat == "speed" || stat == "power" || stat == "engine") {
     // Bigger Value is Better for these - Top Speed, BHP, Engine Size
-    if (cars[player1[0]][stat] > cars[player2[0]][stat]) {
+    if (carPlayer1[stat] > carPlayer2[stat]) {
       currentplayer = 1;
     } else {
       currentplayer = 2;
     }
-  } else if (stat == 4 || stat == 7) {
+  } else if (stat == "sixty" || stat == "weight") {
     // Smaller Value is Better for these - 0-60 Time, Weight
-    if (cars[player1[0]][stat] < cars[player2[0]][stat]) {
+    if (carPlayer1[stat] < carPlayer2[stat]) {
       currentplayer = 1;
     } else {
       currentplayer = 2;
@@ -123,59 +125,73 @@ function allocateCars(player, draw) { // e.g. allocateCars(1);
 
 function chooseStat(stat) {
   if (currentplayer == 1) {
-    showCar(1,0,stat);
-    var carTimer = setTimeout("showCar(2, 0, " + stat + ")",500),
-        compareTimer = setTimeout('compareCars(' + stat + ')',1500);
+    showCar(1, 0, stat);
+    var carTimer = setTimeout(function() {
+      showCar(2, 0, arguments[0]);
+    }, 500, stat);
   } else {
     showCar(2,0,stat);
-    var carTimer = setTimeout("showCar(1, 0, " + stat + ")",500),
-        compareTimer = setTimeout('compareCars(' + stat + ')',1500);
+    var carTimer = setTimeout(function() {
+      showCar(1, 0, arguments[0]);
+    }, 500, stat);
   }
+  var compareTimer = setTimeout(function() {
+    compareCars(arguments[0]);
+  }, 1500, stat);
 }
 
 function computerChooseStat() {
   // are any of the values 'good'?
-  var chosen;
+  var chosen,
+      playerCar = cars[player1[0]];
 
-  if (cars[player1[0]][3] > 199) {
+  if (playerCar.speed > 199) {
     // Top Speed
-    chosen = 3;
-  } else if (cars[player1[0]][4] < 4) {
+    chosen = "speed";
+  } else if (playerCar.sixty < 4) {
     // 0-60 Time
-    chosen = 4;
-  } else if (cars[player1[0]][5] > 450) {
+    chosen = "sixty";
+  } else if (playerCar.power > 450) {
     // BHP
-    chosen = 5;
-  } else if (cars[player1[0]][6] > 5000 ) {
+    chosen = "power";
+  } else if (playerCar.engine > 5000 ) {
     // Engine Size in cc
-    chosen = 6;
-  } else if (cars[player1[0]][7] < 1200) {
+    chosen = "engine";
+  } else if (playerCar.weight < 1200) {
     // Weight in Kg
-    chosen = 7;
+    chosen = "weight";
   }
   // if not, are any of them 'ok'
-  else if (cars[player1[0]][3] > 180) {
+  else if (playerCar.speed > 180) {
     // Top Speed
-    chosen = 3;
-  } else if (cars[player1[0]][4] < 4.6) {
+    chosen = "speed";
+  } else if (playerCar.sixty < 4.6) {
     // 0-60 Time
-    chosen = 4;
-  } else if (cars[player1[0]][5] > 350) {
+    chosen = "sixty";
+  } else if (playerCar.power > 350) {
     // BHP
-    chosen = 5;
-  } else if (cars[player1[0]][6] > 4000 ) {
+    chosen = "power";
+  } else if (playerCar.engine > 4000 ) {
     // Engine Size in cc
-    chosen = 6;
-  } else if (cars[player1[0]][7] < 1350) {
+    chosen = "engine";
+  } else if (playerCar.weight < 1350) {
     // Weight in Kg
-    chosen = 7;
+    chosen = "weight";
+  } else {
+    // if there aren't any good or ok fields, then just go for pot luck
+    chosen = chooseRandomStat();
   }
-  // if there aren't any good or ok fields, then just go for pot luck
-  else {
-    chosen = parseInt((Math.random()*5)+3);
-  }
-  setTimeout("chooseStat(" + chosen + ")",1000);
-}
+
+  setTimeout(function() {
+    chooseStat(arguments[0]);
+  }, 1000, chosen);
+};
+
+function chooseRandomStat() {
+  var stats = ["speed", "sixty", "power", "engine", "weight"];
+
+  return stats[Math.floor(Math.random() * stats.length)];
+};
 
 function setupGame() {
   player1 = []; // clear array just incase
@@ -190,14 +206,14 @@ function setupGame() {
 
   if (currentplayer == 1) {
     // Show P1's Card, Hide P2's Card
-    showCar(1,1,0);
+    showCar(1,1,"");
     showBlank(2);
   } else {
     // Show P2's Card, Hide P1's Card
     if (game == 1) {
-      showCar(2,0,0); // don't want interactive links for the computers turn! duh!
+      showCar(2,0,""); // don't want interactive links for the computers turn! duh!
     } else {
-      showCar(2,1,0);
+      showCar(2,1,"");
     }
     showBlank(1);
   }
@@ -247,12 +263,12 @@ function updateScore() {
   if (currentplayer == 1) {
     // Player 1's Turn
     // Show P1's Card, Hide P2's Card
-    showCar(1,1,0);
+    showCar(1,1,"");
     showBlank(2);
   } else if (currentplayer == 2) {
     // Player 2's Turn
     // Show P2's Card, Hide P1's Card
-    showCar(2,1,0);
+    showCar(2,1,"");
     showBlank(1);
   }
 }
@@ -266,58 +282,50 @@ function showBlank(player) {
 }
 
 function showCar(player, interactive, stat) {
-  var carno;
-  if (player == 1) {
-    carno = player1[0];
-  } else {
+  var carno = player1[0];
+
+  if (player != 1) {
     carno = player2[0];
   }
 
-  //Image Ref, Car Name, Car Country, Top Speed, 0-60, Power, Engine Size cc, Weight Kgs
-  var imageref = cars[carno][0],
-      carname = cars[carno][1],
-      country = countries[cars[carno][2]],
-      topspeed = cars[carno][3],
-      zerosixty = cars[carno][4],
-      power = cars[carno][5],
-      enginesize = cars[carno][6],
-      weight = cars[carno][7];
+  var car = cars[carno],
+      country = countries[car.country];
 
   var card = '<div class="country">\
-             <p>'+country[1]+'</p>\
-             <img src="images/flags/'+country[0]+'.png" alt="'+country[1]+'">\
+             <p>'+country.name+'</p>\
+             <img src="images/flags/'+country.image+'.png" alt="'+country.name+'">\
              </div>\
-             <h2>'+carname+'</h2>\
-             <img src="images/cars/'+imageref+'.png" alt="'+carname+'" />\
+             <h2>'+car.name+'</h2>\
+             <img src="images/cars/'+car.image+'.png" alt="'+car.name+'" />\
              <dl>\
              ';
 
   if (interactive) {
-    card += '<dt><a id="3" class="stat">Top Speed</a></dt>\
-            <dd><a id="3" class="stat">'+topspeed+' mph</a></dd>\
-            <dt><a id="4" class="stat">0 - 60 mph</a></dt>\
-            <dd><a id="4" class="stat">'+zerosixty+' sec</a></dd>\
-            <dt><a id="5" class="stat">Power</a></dt>\
-            <dd><a id="5" class="stat">'+power+' bhp</a></dd>\
-            <dt><a id="6" class="stat">Capacity</a></dt>\
-            <dd><a id="6" class="stat">'+enginesize+' cc</a></dd>\
-            <dt><a id="7" class="stat">Weight</a></dt>\
-            <dd><a id="7" class="stat">'+weight+' Kg</a></dd>';
+    card += '<dt><a id="speed" class="stat">Top Speed</a></dt>\
+            <dd><a id="speed" class="stat">'+car.speed+' mph</a></dd>\
+            <dt><a id="sixty" class="stat">0 - 60 mph</a></dt>\
+            <dd><a id="sixty" class="stat">'+car.sixty+' sec</a></dd>\
+            <dt><a id="power" class="stat">Power</a></dt>\
+            <dd><a id="power" class="stat">'+car.power+' bhp</a></dd>\
+            <dt><a id="engine" class="stat">Capacity</a></dt>\
+            <dd><a id="engine" class="stat">'+car.engine+' cc</a></dd>\
+            <dt><a id="weight" class="stat">Weight</a></dt>\
+            <dd><a id="weight" class="stat">'+car.weight+' Kg</a></dd>';
   } else {
-    var classes = ['','','','',''];
-    if (stat > 0) {
-      classes[stat-3] = 'selected';
+    var classes = { speed:'', sixty:'', power:'', engine:'', weight:'' };
+    if (stat != "") {
+      classes[stat] = 'selected';
     }
-    card += '<dt class="'+classes[0]+'">Top Speed</dt>\
-            <dd class="'+classes[0]+'">'+topspeed+' mph</dd>\
-            <dt class="'+classes[1]+'">0 - 60 mph</dt>\
-            <dd class="'+classes[1]+'">'+zerosixty+' sec</dd>\
-            <dt class="'+classes[2]+'">Power</dt>\
-            <dd class="'+classes[2]+'">'+power+' bhp</dd>\
-            <dt class="'+classes[3]+'">Capacity</dt>\
-            <dd class="'+classes[3]+'">'+enginesize+' cc</dd>\
-            <dt class="'+classes[4]+'">Weight</dt>\
-            <dd class="'+classes[4]+'">'+weight+' Kg</dd>';
+    card += '<dt class="'+classes.speed+'">Top Speed</dt>\
+            <dd class="'+classes.speed+'">'+car.speed+' mph</dd>\
+            <dt class="'+classes.sixty+'">0 - 60 mph</dt>\
+            <dd class="'+classes.sixty+'">'+car.sixty+' sec</dd>\
+            <dt class="'+classes.power+'">Power</dt>\
+            <dd class="'+classes.power+'">'+car.power+' bhp</dd>\
+            <dt class="'+classes.engine+'">Capacity</dt>\
+            <dd class="'+classes.engine+'">'+car.engine+' cc</dd>\
+            <dt class="'+classes.weight+'">Weight</dt>\
+            <dd class="'+classes.weight+'">'+car.weight+' Kg</dd>';
   }
 
   card += '</dl>';

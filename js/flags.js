@@ -25,9 +25,9 @@
 var flags = [];
 
 // Image Ref, Country Name
-flags[0] = ["100", "GB"]
-flags[1] = ["110", "GERMANY"]
-flags[2] = ["120", "ITALY"]
-flags[3] = ["130", "JAPAN"]
-flags[4] = ["140", "SWEDEN"]
-flags[5] = ["150", "USA"]
+flags[0] = { image: "100", name: "GB"      };
+flags[1] = { image: "110", name: "GERMANY" };
+flags[2] = { image: "120", name: "ITALY"   };
+flags[3] = { image: "130", name: "JAPAN"   };
+flags[4] = { image: "140", name: "SWEDEN"  };
+flags[5] = { image: "150", name: "USA"     };
