@@ -9,24 +9,24 @@
     <meta name="author" content="Chris Barber" />
     <meta name="Copyright" content="Chris Barber"/>
     <link rel="stylesheet" href="css/import.css" type="text/css" />
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="js/jquery-2.1.1.min.js" type="text/javascript"></script>
     <script src="js/cars.js" type="text/javascript"></script>
     <script src="js/flags.js" type="text/javascript"></script>
     <script type="text/javascript">
-      var images = new Array();
-      var flags = new Array();
+      var images = [],
+          flagImages = [];
 
       $(document).ready(function() {
         // preload all car images to increase speed of game
 
         for(var i = 0; i<cars.length; i++) {
           images[i] = new Image();
-          images[i].src = "../images/cars/" + cars[i][0] + ".png";
+          images[i].src = "../images/cars/" + cars[i].image + ".png";
         }
 
         for(var i = 0; i<flags.length; i++) {
-          flags[i] = new Image();
-          flags[i].src = "../images/flags/" + flags[i][0] + ".png";
+          flagImages[i] = new Image();
+          flagImages[i].src = "../images/flags/" + flags[i].image + ".png";
         }
 
         $('#player1').click(function() {
