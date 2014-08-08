@@ -37,7 +37,7 @@ $(document).ready(function() {
   setupCountries();
   setupGame();
 
-  $('#p1card').on('click', '.stat', null, function() {
+  $('.card').on('click', '.stat', null, function() {
     chooseStat($(this).attr('id'));
   });
 });
