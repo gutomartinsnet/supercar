@@ -1,17 +1,6 @@
-var images = [],
-    flagImages = [];
-
 $(document).ready(function() {
-  // preload all car images to increase speed of game
-
-  for(var i = 0; i < cars.length; i++) {
-    images[i] = new Image();
-    images[i].src = "../images/cars/" + cars[i].image + ".png";
-  }
-
-  for(var i = 0; i < flags.length; i++) {
-    flagImages[i] = new Image();
-    flagImages[i].src = "../images/flags/" + flags[i].image + ".png";
+  if (!$('.intro')) {
+    return;
   }
 
   $('#player1').click(function() {

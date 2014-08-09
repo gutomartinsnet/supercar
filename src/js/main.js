@@ -33,6 +33,10 @@ var player1score = 0, // score (number of games won)
     carTimer;
 
 $(document).ready(function() {
+  if (!$('.game')) {
+    // Return early if this is not the game page
+    return;
+  }
 
   setupCountries();
   setupGame();
@@ -288,10 +292,10 @@ function showCar(player, interactive, stat) {
 
   var card = '<div class="country">\
              <p>'+country.name+'</p>\
-             <img src="images/flags/'+country.image+'.png" alt="'+country.name+'">\
+             <img src="assets/images/flags/'+country.image+'.png" alt="'+country.name+'">\
              </div>\
              <h2>'+car.name+'</h2>\
-             <img src="images/cars/'+car.image+'.png" alt="'+car.name+'" />\
+             <img src="assets/images/cars/'+car.image+'.png" alt="'+car.name+'" />\
              <dl>\
              ';
 

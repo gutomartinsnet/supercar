@@ -1,0 +1,24 @@
+{
+  "name": "supercar",
+  "version": "0.2.0",
+  "description": "A top trumps style game for supercars written in JavaScript",
+  "author": "Chris Barber",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrisbarber86/supercar"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.7",
+    "gulp-util": "^3.0.0",
+    "gulp-clean": "^0.3.1",
+    "gulp-ruby-sass": "^0.7.1",
+    "gulp-minify-css": "^0.3.7",
+    "gulp-rename": "^1.2.0",
+    "gulp-concat": "^2.3.4",
+    "gulp-notify": "^1.4.2",
+    "gulp-jshint": "^1.8.4",
+    "gulp-uglify": "^0.3.1",
+    "gulp-coffee": "^2.1.1",
+    "gulp-jasmine": "^0.3.0",
+  }
+}
