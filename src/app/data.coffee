@@ -15,18 +15,8 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ###
 
-# Representation of a Car
-class Car
-  constructor: (data) ->
-    [@image, @name, @country, @speed, @sixty, @power, @engine, @weight] = data
-
-# Representation of a Flag
-class Flag
-  constructor: (data) ->
-    [@image, @name] = data
-
 # Image, Name, Country, Speed, 0-60, Power, Engine, Weight
-carData = [
+App.carData = [
   [ "005", "AC Cobra",               "150", 160, 4.2, 485, 6997, 1148 ],
   [ "010", "Aston Martin DB9",       "100", 186, 4.9, 450, 5935, 1750 ],
   [ "015", "Bentley Continental GT", "100", 196, 4.8, 552, 5998, 2385 ],
@@ -62,7 +52,7 @@ carData = [
 ]
 
 # Image, Name
-flagData = [
+App.countryData = [
   [ "100", "GB"      ],
   [ "110", "GERMANY" ],
   [ "120", "ITALY"   ],
@@ -70,27 +60,3 @@ flagData = [
   [ "140", "SWEDEN"  ],
   [ "150", "USA"     ],
 ]
-
-getCars = ->
-  cars = []
-  for data in carData
-    cars.push new Car(data)
-  cars
-
-getFlags = ->
-  flags = []
-  for data in flagData
-    flags.push new Flag(data)
-  flags
-
-###*
-# @property cars
-# @type {Array}
-###
-@cars = getCars()
-
-###*
-# @property flags
-# @type {Array}
-###
-@flags = getFlags()

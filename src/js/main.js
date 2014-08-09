@@ -20,15 +20,9 @@ var game = getURLParameter('g'),
     p1name = getURLParameter('p1'),
     p2name = getURLParameter('p2');
 
-// Set up arrays
-var player1 = [], // to hold p1's cars
-    player2 = [], // to hold p2's cars
-    pot = [], // to hold cars from both players before giving them to the winner
-    countries = [];
+var player1, player2, app;
 
-var player1score = 0, // score (number of games won)
-    player2score = 0, // score (number of games won)
-    currentplayer = 1,
+var currentplayer = 1,
     compareTimer,
     carTimer;
 
@@ -38,7 +32,10 @@ $(document).ready(function() {
     return;
   }
 
-  setupCountries();
+  player1 = new Player(p1name);
+  player2 = new Player(p2name);
+  app = new App()
+
   setupGame();
 
   $('.card').on('click', '.stat', null, function() {
@@ -46,18 +43,11 @@ $(document).ready(function() {
   });
 });
 
-function setupCountries() {
-  // did this so I can call countries[country ref] rather than looping the array everytime to find the right image ref
-  for(var j = 0; j<flags.length; j++) {
-    countries[flags[j].image] = flags[j];
-  }
-}
-
 function compareCars(stat) {
   var drawn = false,
       text = "",
-      carPlayer1 = cars[player1[0]],
-      carPlayer2 = cars[player2[0]];
+      carPlayer1 = app.cars[player1.cars[0]],
+      carPlayer2 = app.cars[player2.cars[0]];
 
   if (carPlayer1[stat] == carPlayer2[stat]) {
     drawn = true;
@@ -94,28 +84,27 @@ function compareCars(stat) {
 
 function allocateCars(player, draw) { // e.g. allocateCars(1);
   if (draw) {
-    player1.push(player1.shift()); // put current card to back of the stack
-    player2.push(player2.shift()); // put current card to back of the stack
+    player1.cars.push(player1.cars.shift()); // put current card to back of the stack
+    player2.cars.push(player2.cars.shift()); // put current card to back of the stack
   } else {
     // This function will take each players car, put them into the pot, and then reassign to the end of the winners car array
     // take cars and put into pot:
-    pot.push(player1.shift());
-    pot.push(player2.shift());
-    // .shift = removes the first element in the array and returns it.
+    app.pot.push(player1.cars.shift());
+    app.pot.push(player2.cars.shift());
     // . push = pushes object to end of array.
     // Combined = remove current card from the player and put it in the pot.
     if (player == 1) {
       // player 1 is the winner -- loop the pot and reassign the cars
-      for(i = 0; i < pot.length; i++) {
-        player1.push(pot[i]);
+      for(i = 0; i < app.pot.length; i++) {
+        player1.cars.push(app.pot[i]);
       }
-      pot = []; // clear the pot
+      app.pot = []; // clear the pot
     } else if (player == 2) {
       // player 2 is the winner
-      for(i = 0; i < pot.length; i++) {
-        player2.push(pot[i]);
+      for(i = 0; i < app.pot.length; i++) {
+        player2.cars.push(app.pot[i]);
       }
-      pot = []; // clear the pot
+      app.pot = []; // clear the pot
     } else {
       // Something has gone horribly wrong
     }
@@ -142,7 +131,7 @@ function chooseStat(stat) {
 function computerChooseStat() {
   // are any of the values 'good'?
   var chosen,
-      playerCar = cars[player1[0]];
+      playerCar = app.cars[player1.cars[0]];
 
   if (playerCar.speed > 199) {
     // Top Speed
@@ -193,10 +182,6 @@ function chooseRandomStat() {
 };
 
 function setupGame() {
-  player1 = []; // clear array just incase
-  player2 = []; // clear array just incase
-  pot = []; // clear array just incase
-
   shuffleCars(); // initial shuffle of cars
 
   updateScore(); // initialise scores
@@ -222,27 +207,27 @@ function updateScore() {
 
   $('#flash').html(''); // clear status
 
-  var p1data = { name: p1name, games: player1score, cards: player1.length },
+  var p1data = { name: p1name, games: player1.score, cards: player1.cars.length },
       p1score = App.templates.score(p1data);
 
-  var p2data = { name: p2name, games: player2score, cards: player2.length },
+  var p2data = { name: p2name, games: player2.score, cards: player2.cars.length },
       p2score = App.templates.score(p2data);
 
   $('#p1score').html(p1score);
   $('#p2score').html(p2score);
 
-  if (player1.length == 0) {
+  if (player1.cars.length == 0) {
     // player 2 wins & player 1 loses
-    player2score++;
+    player2.score++;
     if (confirm(p2name + " has won this game. Do you want to play again?")) {
       setupGame();
     } else {
       location.href = "index.html";
     }
 
-  } else if (player2.length == 0) {
+  } else if (player2.cars.length == 0) {
     // player 1 wins & player 2 loses
-    player1score++;
+    player1.score++;
     if (confirm(p1name + " has won this game. Do you want to play again?")) {
       setupGame();
     } else {
@@ -274,18 +259,18 @@ function showBlank(player) {
 }
 
 function showCar(player, interactive, stat) {
-  var carno = player1[0];
+  var carno = player1.cars[0];
 
   if (player != 1) {
-    carno = player2[0];
+    carno = player2.cars[0];
   }
 
   var classes = { speed:'', sixty:'', power:'', engine:'', weight:'' };
   if (stat != "") {
     classes[stat] = 'selected';
   }
-  var car = cars[carno],
-      data = { car: car, country: countries[car.country], interactive: interactive, classes: classes },
+  var car = app.cars[carno],
+      data = { car: car, country: app.countries[car.country], interactive: interactive, classes: classes },
       card  = App.templates.card(data);
 
   if (player == 1) {
@@ -304,8 +289,8 @@ function shuffleCars() {
   // shuffle array (Line of Code from: http://onwebdev.blogspot.com/2011/05/jquery-randomize-and-shuffle-array.html)
   for(var j, x, i = randoms.length; i; j = parseInt(Math.random() * i), x = randoms[--i], randoms[i] = randoms[j], randoms[j] = x);
   // deal card array location out to players
-  for(k=0;k<16;k++) { player1.push(randoms[k]) }
-  for(k=16;k<32;k++) { player2.push(randoms[k]) }
+  for(k=0;k<16;k++) { player1.cars.push(randoms[k]) }
+  for(k=16;k<32;k++) { player2.cars.push(randoms[k]) }
 }
 
 function getURLParameter(name) {

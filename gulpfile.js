@@ -45,6 +45,7 @@ gulp.task('js', function() {
   gulp.src('src/js/**/*.js')
     .pipe(concat('support.js'))
     .pipe(rename({suffix: '.min'}))
+    .pipe(uglify())
     .pipe(gulp.dest('build/assets/js'))
     .pipe(notify({message: "Scripts task complete"}));
 });
