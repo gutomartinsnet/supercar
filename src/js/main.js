@@ -222,20 +222,13 @@ function updateScore() {
 
   $('#flash').html(''); // clear status
 
-  var p1score = '<ul>\
-                <li class="name">Name: ' + p1name + '</li>\
-                <li class="games">Games: ' + player1score + '</li>\
-                <li class="cards">Cards: ' + player1.length + '</li>\
-                </ul>';
+  var p1data = { name: p1name, games: player1score, cards: player1.length },
+      p1score = App.templates.score(p1data);
+
+  var p2data = { name: p2name, games: player2score, cards: player2.length },
+      p2score = App.templates.score(p2data);
 
   $('#p1score').html(p1score);
-
-  var p2score = '<ul>\
-                <li class="name">Name: ' + p2name + '</li>\
-                <li class="games">Games: ' + player2score + '</li>\
-                <li class="cards">Cards: ' + player2.length + '</li>\
-                </ul>';
-
   $('#p2score').html(p2score);
 
   if (player1.length == 0) {
@@ -287,47 +280,13 @@ function showCar(player, interactive, stat) {
     carno = player2[0];
   }
 
-  var car = cars[carno],
-      country = countries[car.country];
-
-  var card = '<div class="country">\
-             <p>'+country.name+'</p>\
-             <img src="assets/images/flags/'+country.image+'.png" alt="'+country.name+'">\
-             </div>\
-             <h2>'+car.name+'</h2>\
-             <img src="assets/images/cars/'+car.image+'.png" alt="'+car.name+'" />\
-             <dl>\
-             ';
-
-  if (interactive) {
-    card += '<dt><a id="speed" class="stat">Top Speed</a></dt>\
-            <dd><a id="speed" class="stat">'+car.speed+' mph</a></dd>\
-            <dt><a id="sixty" class="stat">0 - 60 mph</a></dt>\
-            <dd><a id="sixty" class="stat">'+car.sixty+' sec</a></dd>\
-            <dt><a id="power" class="stat">Power</a></dt>\
-            <dd><a id="power" class="stat">'+car.power+' bhp</a></dd>\
-            <dt><a id="engine" class="stat">Capacity</a></dt>\
-            <dd><a id="engine" class="stat">'+car.engine+' cc</a></dd>\
-            <dt><a id="weight" class="stat">Weight</a></dt>\
-            <dd><a id="weight" class="stat">'+car.weight+' Kg</a></dd>';
-  } else {
-    var classes = { speed:'', sixty:'', power:'', engine:'', weight:'' };
-    if (stat != "") {
-      classes[stat] = 'selected';
-    }
-    card += '<dt class="'+classes.speed+'">Top Speed</dt>\
-            <dd class="'+classes.speed+'">'+car.speed+' mph</dd>\
-            <dt class="'+classes.sixty+'">0 - 60 mph</dt>\
-            <dd class="'+classes.sixty+'">'+car.sixty+' sec</dd>\
-            <dt class="'+classes.power+'">Power</dt>\
-            <dd class="'+classes.power+'">'+car.power+' bhp</dd>\
-            <dt class="'+classes.engine+'">Capacity</dt>\
-            <dd class="'+classes.engine+'">'+car.engine+' cc</dd>\
-            <dt class="'+classes.weight+'">Weight</dt>\
-            <dd class="'+classes.weight+'">'+car.weight+' Kg</dd>';
+  var classes = { speed:'', sixty:'', power:'', engine:'', weight:'' };
+  if (stat != "") {
+    classes[stat] = 'selected';
   }
-
-  card += '</dl>';
+  var car = cars[carno],
+      data = { car: car, country: countries[car.country], interactive: interactive, classes: classes },
+      card  = App.templates.card(data);
 
   if (player == 1) {
     $('#p1card').html(card);
@@ -355,5 +314,5 @@ function getURLParameter(name) {
       (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
   );
 }
-// quick range arrray populate from: http://stackoverflow.com/questions/6299500/tersest-way-to-create-an-array-of-integers-from-1-20-in-javascript
+// quick range array populate from: http://stackoverflow.com/questions/6299500/tersest-way-to-create-an-array-of-integers-from-1-20-in-javascript
 function rangefill(i){return i?rangefill(i-1).concat(i-1):[]}

@@ -7,10 +7,13 @@ var gulp    = require('gulp'),
     jshint  = require('gulp-jshint'),
     uglify  = require('gulp-uglify'),
     coffee  = require('gulp-coffee'),
+    declare = require('gulp-declare'),
     jasmine = require('gulp-jasmine'),
     sass    = require('gulp-ruby-sass'),
     cslint  = require("gulp-coffeelint"),
-    mincss  = require('gulp-minify-css');
+    mincss  = require('gulp-minify-css'),
+    handle  = require('gulp-handlebars'),
+    define  = require('gulp-define-module');
 
 // Compile sass files
 gulp.task('styles', function() {
@@ -48,7 +51,7 @@ gulp.task('js', function() {
 
 // Compile coffeescript files
 gulp.task('coffee', function() {
-  gulp.src('src/js/**/*.coffee')
+  gulp.src('src/app/**/*.coffee')
     .pipe(cslint())
     .pipe(cslint.reporter())
     .pipe(coffee({bare: true}).on('error', gutil.log))
@@ -57,6 +60,20 @@ gulp.task('coffee', function() {
     .pipe(uglify())
     .pipe(gulp.dest('build/assets/js'))
     .pipe(notify({message: "Scripts task complete"}));
+});
+
+// Precompile Handlebar Templates
+gulp.task('templates', function(){
+  gulp.src('src/app/templates/**/*.hbs')
+    .pipe(handle())
+    .pipe(define('plain'))
+    .pipe(declare({
+      namespace: 'App.templates'
+    }))
+    .pipe(concat('templates.js'))
+    .pipe(rename({suffix: '.min'}))
+    .pipe(gulp.dest('build/assets/js/'))
+    .pipe(notify({message: "Templates task complete"}));
 });
 
 // Clean the build folder out
@@ -73,5 +90,5 @@ gulp.task('tests', function() {
 
 // Default build
 gulp.task('default', ['clean'], function() {
-  gulp.start('styles', 'js', 'coffee', 'images', 'html', 'tests');
+  gulp.start('styles', 'js', 'coffee', 'templates', 'images', 'html', 'tests');
 });
