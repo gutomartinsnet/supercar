@@ -9,6 +9,7 @@ var gulp    = require('gulp'),
     coffee  = require('gulp-coffee'),
     jasmine = require('gulp-jasmine'),
     sass    = require('gulp-ruby-sass'),
+    cslint  = require("gulp-coffeelint"),
     mincss  = require('gulp-minify-css');
 
 // Compile sass files
@@ -48,8 +49,9 @@ gulp.task('js', function() {
 // Compile coffeescript files
 gulp.task('coffee', function() {
   gulp.src('src/js/**/*.coffee')
+    .pipe(cslint())
+    .pipe(cslint.reporter())
     .pipe(coffee({bare: true}).on('error', gutil.log))
-    .pipe(jshint.reporter('default'))
     .pipe(concat('main.js'))
     .pipe(rename({suffix: '.min'}))
     .pipe(uglify())
