@@ -1,5 +1,6 @@
 .DS_Store
 .sass-cache/**/*
+build/**/*
 
 # From https://github.com/github/gitignore/blob/master/Node.gitignore
 
