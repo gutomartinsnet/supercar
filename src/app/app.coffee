@@ -32,7 +32,7 @@ class App
     cars = []
     for data in @constructor.carData
       cars.push new Car(data)
-    cars
+    _shuffle cars
 
   getCountries: ->
     countries = {}
@@ -40,6 +40,10 @@ class App
       country = new Country(data)
       countries[country.id] = country
     countries
+
+  dealCars: ->
+    # Deal our cars to each player
+
 
 # Representation of a Player
 class Player
@@ -58,3 +62,4 @@ class Country
     [@image, @name] = data
 
     @id = @image
+

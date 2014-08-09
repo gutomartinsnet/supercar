@@ -34,7 +34,7 @@ $(document).ready(function() {
 
   player1 = new Player(p1name);
   player2 = new Player(p2name);
-  app = new App()
+  app = new App();
 
   setupGame();
 
@@ -46,8 +46,8 @@ $(document).ready(function() {
 function compareCars(stat) {
   var drawn = false,
       text = "",
-      carPlayer1 = app.cars[player1.cars[0]],
-      carPlayer2 = app.cars[player2.cars[0]];
+      carPlayer1 = player1.cars[0],
+      carPlayer2 = player2.cars[0];
 
   if (carPlayer1[stat] == carPlayer2[stat]) {
     drawn = true;
@@ -79,7 +79,7 @@ function compareCars(stat) {
   }
 
   $('#flash').html(text);
-  setTimeout('updateScore()',2500);
+  setTimeout('updateScore()', 2500);
 }
 
 function allocateCars(player, draw) { // e.g. allocateCars(1);
@@ -131,7 +131,7 @@ function chooseStat(stat) {
 function computerChooseStat() {
   // are any of the values 'good'?
   var chosen,
-      playerCar = app.cars[player1.cars[0]];
+      playerCar = player1.cars[0];
 
   if (playerCar.speed > 199) {
     // Top Speed
@@ -259,18 +259,17 @@ function showBlank(player) {
 }
 
 function showCar(player, interactive, stat) {
-  var carno = player1.cars[0];
+  var car = player1.cars[0];
 
   if (player != 1) {
-    carno = player2.cars[0];
+    car = player2.cars[0];
   }
 
   var classes = { speed:'', sixty:'', power:'', engine:'', weight:'' };
   if (stat != "") {
     classes[stat] = 'selected';
   }
-  var car = app.cars[carno],
-      data = { car: car, country: app.countries[car.country], interactive: interactive, classes: classes },
+  var data = { car: car, country: app.countries[car.country], interactive: interactive, classes: classes },
       card  = App.templates.card(data);
 
   if (player == 1) {
@@ -284,13 +283,10 @@ function showCar(player, interactive, stat) {
 }
 
 function shuffleCars() {
-  // Duplicate cars array
-  var randoms = rangefill(32);
-  // shuffle array (Line of Code from: http://onwebdev.blogspot.com/2011/05/jquery-randomize-and-shuffle-array.html)
-  for(var j, x, i = randoms.length; i; j = parseInt(Math.random() * i), x = randoms[--i], randoms[i] = randoms[j], randoms[j] = x);
-  // deal card array location out to players
-  for(k=0;k<16;k++) { player1.cars.push(randoms[k]) }
-  for(k=16;k<32;k++) { player2.cars.push(randoms[k]) }
+  var length = app.cars.length;
+
+  player1.cars = app.cars.slice(0, length/2);
+  player2.cars = app.cars.slice(length/2, length);
 }
 
 function getURLParameter(name) {
@@ -299,5 +295,3 @@ function getURLParameter(name) {
       (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
   );
 }
-// quick range array populate from: http://stackoverflow.com/questions/6299500/tersest-way-to-create-an-array-of-integers-from-1-20-in-javascript
-function rangefill(i){return i?rangefill(i-1).concat(i-1):[]}
