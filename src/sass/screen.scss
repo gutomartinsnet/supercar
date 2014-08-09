@@ -1,0 +1,218 @@
+body {
+  background: #3f3f3f;
+  font: 62.5% Arial, Helvetica, sans-serif;
+}
+
+div#wrapper {
+  margin:0 auto;
+  position:relative;
+  width: 960px;
+}
+
+h1 {
+  color: #717171;
+  font-size: 5em;
+  margin: 20px 0 0 0;
+  text-align: center;
+  text-shadow: 0 3px 3px #333;
+  text-transform: uppercase;
+}
+
+p {
+  color: #e9e9e9;
+  font-size: 1.2em;
+  margin: 10px 0;
+  text-align: justify;
+  text-shadow: 0 3px 3px #333;
+}
+
+#intro {
+  clear: both;
+  display: block;
+  height: 30px;
+  margin: 0px auto;
+  position: relative;
+  width: 700px;
+
+  p {
+    clear: both;
+    display: block;
+    margin: 10px 0;
+    text-align: left;
+
+    input, label {
+      padding: 4px;
+    }
+
+    label {
+      display: block;
+      float: left;
+      font-size: 1.1em;
+      margin: 0;
+      padding:4px;
+      width: 180px;
+    }
+
+    input[type=text] {
+      width: 250px;
+    }
+
+    input[type=button] {
+      margin: 0 10px;
+    }
+  }
+}
+
+
+#flash {
+  clear: both;
+  display: block;
+  height: 30px;
+  margin: 0px auto;
+  position: relative;
+  width: 700px;
+
+  p {
+    text-align: center;
+
+    &.left { text-align: left; }
+    &.right { text-align: right; }
+  }
+}
+
+#supercars {
+  margin: 10px auto;
+  position: relative;
+  width: 750px;
+}
+
+.container {
+  display: block;
+  float: left;
+  height: 412px;
+  margin: 0 20px;
+  width: 324px;
+}
+
+.score {
+  background: #fff;
+  height: 15px;
+  margin: 10px 0;
+  padding: 10px;
+  width: 320px;
+
+  ul {
+    clear: both;
+
+    li {
+      color: #717171;
+      display: block;
+      float: left;
+      font-size: 1.3em;
+      font-weight: bold;
+      margin: 0;
+      padding: 0 5px 0 0;
+      text-shadow: none;
+
+      &.name {
+        text-align: left;
+        width: 150px;
+      }
+
+      &.games, &.cards {
+        text-align: right;
+        width: 75px;
+      }
+    }
+  }
+}
+
+.card {
+  background: #fff;
+  border: 8px solid #fff;
+  height: 412px;
+  width: 324px;
+
+  img {
+    background: #cfcfcf;
+    color: #cfcfcf;
+    float: left;
+    height: 200px;
+    width: 324px;
+  }
+
+  h2 {
+    background: #cfcfcf;
+    color: #717171;
+    font-size: 1.8em;
+    font-weight: bold;
+    height: 30px;
+    line-height: 1.8em;
+    text-align: center;
+    text-shadow: 0 1px 1px #f5f5f5;
+    width: 324px;
+  }
+
+  .country {
+    background: #fff;
+    color: #717171;
+    font-size: 1.6em;
+    height: 30px;
+    text-shadow: 0 1px 1px #f5f5f5;
+    width: 324px;
+
+    p {
+      clear: both;
+      color: #717171;
+      float: left;
+      font-weight: bold;
+      margin: 0;
+      padding: 4px 0;
+      text-align: left;
+      text-shadow: none;
+      text-transform: uppercase;
+    }
+
+    img {
+      background: #ffffff;
+      color: #000000;
+      float: right;
+      height: 30px;
+      width: 45px;
+    }
+  }
+
+  dl {
+    background: #cfcfcf;
+    color: #717171;
+    font-size: 1.6em;
+    font-weight: bold;
+    height: 142px;
+    line-height: 1.8em;
+    overflow: hidden;
+    padding: 5px 10px;
+    text-shadow: 0 1px 1px #f5f5f5;
+    width: 304px;
+
+    dt {
+      clear: both;
+      float: left;
+    }
+
+    dd {
+      float: right;
+    }
+
+    dt, dd {
+      a {
+        color: #717171;
+        text-decoration: none;
+      }
+
+      &.selected, a:hover {
+        color: #717171;
+        text-decoration: underline;
+      }
+    }
+  }
+}
