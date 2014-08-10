@@ -16,7 +16,7 @@
 ###
 
 # Image, Name, Country, Speed, 0-60, Power, Engine, Weight
-App.carData = [
+Game.carData = [
   [ "005", "AC Cobra",               "150", 160, 4.2, 485, 6997, 1148 ],
   [ "010", "Aston Martin DB9",       "100", 186, 4.9, 450, 5935, 1750 ],
   [ "015", "Bentley Continental GT", "100", 196, 4.8, 552, 5998, 2385 ],
@@ -52,7 +52,7 @@ App.carData = [
 ]
 
 # Image, Name
-App.countryData = [
+Game.countryData = [
   [ "100", "GB"      ],
   [ "110", "GERMANY" ],
   [ "120", "ITALY"   ],

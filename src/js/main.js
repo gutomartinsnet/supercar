@@ -20,7 +20,7 @@ var game = getURLParameter('g'),
     p1name = getURLParameter('p1'),
     p2name = getURLParameter('p2');
 
-var player1, player2, app;
+var player1, player2, game;
 
 var currentplayer = 1,
     compareTimer,
@@ -34,7 +34,7 @@ $(document).ready(function() {
 
   player1 = new Player(p1name);
   player2 = new Player(p2name);
-  app = new App();
+  game = new Game();
 
   setupGame();
 
@@ -89,22 +89,22 @@ function allocateCars(player, draw) { // e.g. allocateCars(1);
   } else {
     // This function will take each players car, put them into the pot, and then reassign to the end of the winners car array
     // take cars and put into pot:
-    app.pot.push(player1.cars.shift());
-    app.pot.push(player2.cars.shift());
+    game.pot.push(player1.cars.shift());
+    game.pot.push(player2.cars.shift());
     // . push = pushes object to end of array.
     // Combined = remove current card from the player and put it in the pot.
     if (player == 1) {
       // player 1 is the winner -- loop the pot and reassign the cars
-      for(i = 0; i < app.pot.length; i++) {
-        player1.cars.push(app.pot[i]);
+      for(i = 0; i < game.pot.length; i++) {
+        player1.cars.push(game.pot[i]);
       }
-      app.pot = []; // clear the pot
+      game.pot = []; // clear the pot
     } else if (player == 2) {
       // player 2 is the winner
-      for(i = 0; i < app.pot.length; i++) {
-        player2.cars.push(app.pot[i]);
+      for(i = 0; i < game.pot.length; i++) {
+        player2.cars.push(game.pot[i]);
       }
-      app.pot = []; // clear the pot
+      game.pot = []; // clear the pot
     } else {
       // Something has gone horribly wrong
     }
@@ -269,7 +269,7 @@ function showCar(player, interactive, stat) {
   if (stat != "") {
     classes[stat] = 'selected';
   }
-  var data = { car: car, country: app.countries[car.country], interactive: interactive, classes: classes },
+  var data = { car: car, country: game.countries[car.country], interactive: interactive, classes: classes },
       card  = App.templates.card(data);
 
   if (player == 1) {
@@ -283,10 +283,10 @@ function showCar(player, interactive, stat) {
 }
 
 function shuffleCars() {
-  var length = app.cars.length;
+  var length = game.cars.length;
 
-  player1.cars = app.cars.slice(0, length/2);
-  player2.cars = app.cars.slice(length/2, length);
+  player1.cars = game.cars.slice(0, length/2);
+  player2.cars = game.cars.slice(length/2, length);
 }
 
 function getURLParameter(name) {

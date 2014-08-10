@@ -16,6 +16,12 @@
 ###
 class App
   constructor: ->
+
+
+
+
+class Game
+  constructor: ->
     # Hold cars from both players before giving them to the winner
     @pot = []
 
