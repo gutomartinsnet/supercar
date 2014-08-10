@@ -16,25 +16,25 @@
  */
 
 // Set up Game variables from Params passed in URL
-var game = getURLParameter('g'),
+var gameType = getURLParameter('g'),
     p1name = getURLParameter('p1'),
     p2name = getURLParameter('p2');
 
-var player1, player2, game;
+var app, game;
 
-var currentplayer = 1,
-    compareTimer,
-    carTimer;
+var compareTimer, carTimer;
 
 $(document).ready(function() {
   if (!$('.game')) {
     // Return early if this is not the game page
     return;
   }
+  
+  // gameType = 1 for 1 player, 2 for two player
+  var twoPlayer = (gameType == 2);
 
-  player1 = new Player(p1name);
-  player2 = new Player(p2name);
-  game = new Game();
+  app = new App();
+  game = new Game(p1name, p2name, twoPlayer);
 
   setupGame();
 
@@ -44,45 +44,38 @@ $(document).ready(function() {
 });
 
 function compareCars(stat) {
-  var drawn = false,
-      text = "",
-      carPlayer1 = player1.cars[0],
-      carPlayer2 = player2.cars[0];
+  var carA = game.getPlayer('one').currentCar(),
+      carB = game.getPlayer('two').currentCar(),
+      drawn = false,
+      text = '';
 
-  if (carPlayer1[stat] == carPlayer2[stat]) {
+  var comparitor = new CarComparitor(carA, carB),
+      result = comparitor.compare(stat);
+
+  if (result === false) {
     drawn = true;
     text = "<p>Draw</p>";
-  } else if (stat == "speed" || stat == "power" || stat == "engine") {
-    // Bigger Value is Better for these - Top Speed, BHP, Engine Size
-    if (carPlayer1[stat] > carPlayer2[stat]) {
-      currentplayer = 1;
+  } else {
+    if (result === carA) {
+      game.currentPlayer = 'one';
+      text = '<p class="left">Player 1 Wins</p>';
     } else {
-      currentplayer = 2;
-    }
-  } else if (stat == "sixty" || stat == "weight") {
-    // Smaller Value is Better for these - 0-60 Time, Weight
-    if (carPlayer1[stat] < carPlayer2[stat]) {
-      currentplayer = 1;
-    } else {
-      currentplayer = 2;
+      game.currentPlayer = 'two';
+      text = '<p class="right">Player 2 Wins</p>';
     }
   }
+
   // allocate the cars (to the winner, or if a draw, then stick the car at the back)
-  allocateCars(currentplayer, drawn);
+  allocateCars(game.getCurrentPlayer(), drawn);
 
-  if (currentplayer == 1 && !drawn) {
-    text = '<p class="left">Player 1 Wins</p>';
-  }
-
-  if (currentplayer == 2 && !drawn) {
-    text = '<p class="right">Player 2 Wins</p>';
-  }
-
-  $('#flash').html(text);
+  app.flash.set(text);
   setTimeout('updateScore()', 2500);
 }
 
 function allocateCars(player, draw) { // e.g. allocateCars(1);
+  var player1 = game.getPlayer('one'),
+      player2 = game.getPlayer('two');
+
   if (draw) {
     player1.cars.push(player1.cars.shift()); // put current card to back of the stack
     player2.cars.push(player2.cars.shift()); // put current card to back of the stack
@@ -112,7 +105,7 @@ function allocateCars(player, draw) { // e.g. allocateCars(1);
 }
 
 function chooseStat(stat) {
-  if (currentplayer == 1) {
+  if (game.currentPlayer == 'one') {
     showCar(1, 0, stat);
     var carTimer = setTimeout(function() {
       showCar(2, 0, arguments[0]);
@@ -129,72 +122,26 @@ function chooseStat(stat) {
 }
 
 function computerChooseStat() {
-  // are any of the values 'good'?
-  var chosen,
-      playerCar = player1.cars[0];
-
-  if (playerCar.speed > 199) {
-    // Top Speed
-    chosen = "speed";
-  } else if (playerCar.sixty < 4) {
-    // 0-60 Time
-    chosen = "sixty";
-  } else if (playerCar.power > 450) {
-    // BHP
-    chosen = "power";
-  } else if (playerCar.engine > 5000 ) {
-    // Engine Size in cc
-    chosen = "engine";
-  } else if (playerCar.weight < 1200) {
-    // Weight in Kg
-    chosen = "weight";
-  }
-  // if not, are any of them 'ok'
-  else if (playerCar.speed > 180) {
-    // Top Speed
-    chosen = "speed";
-  } else if (playerCar.sixty < 4.6) {
-    // 0-60 Time
-    chosen = "sixty";
-  } else if (playerCar.power > 350) {
-    // BHP
-    chosen = "power";
-  } else if (playerCar.engine > 4000 ) {
-    // Engine Size in cc
-    chosen = "engine";
-  } else if (playerCar.weight < 1350) {
-    // Weight in Kg
-    chosen = "weight";
-  } else {
-    // if there aren't any good or ok fields, then just go for pot luck
-    chosen = chooseRandomStat();
-  }
+  var computer = game.getPlayer('two'),
+      chosen = computer.chooseStat();
 
   setTimeout(function() {
     chooseStat(arguments[0]);
   }, 1000, chosen);
 };
 
-function chooseRandomStat() {
-  var stats = ["speed", "sixty", "power", "engine", "weight"];
-
-  return stats[Math.floor(Math.random() * stats.length)];
-};
-
 function setupGame() {
-  shuffleCars(); // initial shuffle of cars
-
   updateScore(); // initialise scores
 
-  if (game == 1) { clearTimeout(carTimer); clearTimeout(compareTimer); }
+  if (gameType == 1) { clearTimeout(carTimer); clearTimeout(compareTimer); }
 
-  if (currentplayer == 1) {
+  if (game.currentPlayer == 'one') {
     // Show P1's Card, Hide P2's Card
     showCar(1,1,"");
     showBlank(2);
   } else {
     // Show P2's Card, Hide P1's Card
-    if (game == 1) {
+    if (gameType == 1) {
       showCar(2,0,""); // don't want interactive links for the computers turn! duh!
     } else {
       showCar(2,1,"");
@@ -204,13 +151,15 @@ function setupGame() {
 }
 
 function updateScore() {
+  var player1 = game.getPlayer('one'),
+      player2 = game.getPlayer('two');
 
-  $('#flash').html(''); // clear status
+  app.flash.clear(); // clear status
 
-  var p1data = { name: p1name, games: player1.score, cards: player1.cars.length },
+  var p1data = { name: player1.name, games: player1.score, cards: player1.cars.length },
       p1score = App.templates.score(p1data);
 
-  var p2data = { name: p2name, games: player2.score, cards: player2.cars.length },
+  var p2data = { name: player2.name, games: player2.score, cards: player2.cars.length },
       p2score = App.templates.score(p2data);
 
   $('#p1score').html(p1score);
@@ -219,7 +168,7 @@ function updateScore() {
   if (player1.cars.length == 0) {
     // player 2 wins & player 1 loses
     player2.score++;
-    if (confirm(p2name + " has won this game. Do you want to play again?")) {
+    if (confirm(player2.name + " has won this game. Do you want to play again?")) {
       setupGame();
     } else {
       location.href = "index.html";
@@ -228,7 +177,7 @@ function updateScore() {
   } else if (player2.cars.length == 0) {
     // player 1 wins & player 2 loses
     player1.score++;
-    if (confirm(p1name + " has won this game. Do you want to play again?")) {
+    if (confirm(player1.name + " has won this game. Do you want to play again?")) {
       setupGame();
     } else {
       location.href = "index.html";
@@ -237,12 +186,12 @@ function updateScore() {
     // still continue playing :)
   }
 
-  if (currentplayer == 1) {
+  if (game.currentPlayer == 'one') {
     // Player 1's Turn
     // Show P1's Card, Hide P2's Card
     showCar(1,1,"");
     showBlank(2);
-  } else if (currentplayer == 2) {
+  } else if (game.currentPlayer == 'two') {
     // Player 2's Turn
     // Show P2's Card, Hide P1's Card
     showCar(2,1,"");
@@ -251,14 +200,18 @@ function updateScore() {
 }
 
 function showBlank(player) {
+  blank  = App.templates.card({blank: true});
+
   if (player == 1) {
-    $('#p1card').html('');
+    $('#p1card').html(blank);
   } else {
-    $('#p2card').html('');
+    $('#p2card').html(blank);
   }
 }
 
 function showCar(player, interactive, stat) {
+  var player1 = game.getPlayer('one'),
+      player2 = game.getPlayer('two');
   var car = player1.cars[0];
 
   if (player != 1) {
@@ -279,14 +232,7 @@ function showCar(player, interactive, stat) {
   }
 
   // activate computer picking if playing against computer
-  if (game == 1 && currentplayer == 2 && interactive != 0) { computerChooseStat(); }
-}
-
-function shuffleCars() {
-  var length = game.cars.length;
-
-  player1.cars = game.cars.slice(0, length/2);
-  player2.cars = game.cars.slice(length/2, length);
+  if (gameType == 1 && game.currentPlayer == 'two' && interactive != 0) { computerChooseStat(); }
 }
 
 function getURLParameter(name) {
