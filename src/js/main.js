@@ -22,8 +22,6 @@ var gameType = getURLParameter('g'),
 
 var app, game;
 
-var compareTimer, carTimer;
-
 $(document).ready(function() {
   if (!$('.game')) {
     // Return early if this is not the game page
@@ -66,57 +64,25 @@ function compareCars(stat) {
   }
 
   // allocate the cars (to the winner, or if a draw, then stick the car at the back)
-  allocateCars(game.getCurrentPlayer(), drawn);
+  game.allocateCars(drawn);
 
   app.flash.set(text);
   setTimeout('updateScore()', 2500);
 }
 
-function allocateCars(player, draw) { // e.g. allocateCars(1);
-  var player1 = game.getPlayer('one'),
-      player2 = game.getPlayer('two');
-
-  if (draw) {
-    player1.cars.push(player1.cars.shift()); // put current card to back of the stack
-    player2.cars.push(player2.cars.shift()); // put current card to back of the stack
-  } else {
-    // This function will take each players car, put them into the pot, and then reassign to the end of the winners car array
-    // take cars and put into pot:
-    game.pot.push(player1.cars.shift());
-    game.pot.push(player2.cars.shift());
-    // . push = pushes object to end of array.
-    // Combined = remove current card from the player and put it in the pot.
-    if (player == 1) {
-      // player 1 is the winner -- loop the pot and reassign the cars
-      for(i = 0; i < game.pot.length; i++) {
-        player1.cars.push(game.pot[i]);
-      }
-      game.pot = []; // clear the pot
-    } else if (player == 2) {
-      // player 2 is the winner
-      for(i = 0; i < game.pot.length; i++) {
-        player2.cars.push(game.pot[i]);
-      }
-      game.pot = []; // clear the pot
-    } else {
-      // Something has gone horribly wrong
-    }
-  }
-}
-
 function chooseStat(stat) {
   if (game.currentPlayer == 'one') {
     showCar(1, 0, stat);
-    var carTimer = setTimeout(function() {
+    Game.carTimer = setTimeout(function() {
       showCar(2, 0, arguments[0]);
     }, 500, stat);
   } else {
     showCar(2,0,stat);
-    var carTimer = setTimeout(function() {
+    Game.carTimer = setTimeout(function() {
       showCar(1, 0, arguments[0]);
     }, 500, stat);
   }
-  var compareTimer = setTimeout(function() {
+  Game.compareTimer = setTimeout(function() {
     compareCars(arguments[0]);
   }, 1500, stat);
 }
@@ -133,7 +99,7 @@ function computerChooseStat() {
 function setupGame() {
   updateScore(); // initialise scores
 
-  if (gameType == 1) { clearTimeout(carTimer); clearTimeout(compareTimer); }
+  if (!game.twoPlayer) { clearTimeout(Game.carTimer); clearTimeout(Game.compareTimer); }
 
   if (game.currentPlayer == 'one') {
     // Show P1's Card, Hide P2's Card
@@ -141,10 +107,10 @@ function setupGame() {
     showBlank(2);
   } else {
     // Show P2's Card, Hide P1's Card
-    if (gameType == 1) {
-      showCar(2,0,""); // don't want interactive links for the computers turn! duh!
-    } else {
+    if (game.twoPlayer) {
       showCar(2,1,"");
+    } else {
+      showCar(2,0,""); // don't want interactive links for the computers turn! duh!
     }
     showBlank(1);
   }
@@ -156,11 +122,8 @@ function updateScore() {
 
   app.flash.clear(); // clear status
 
-  var p1data = { name: player1.name, games: player1.score, cards: player1.cars.length },
-      p1score = App.templates.score(p1data);
-
-  var p2data = { name: player2.name, games: player2.score, cards: player2.cars.length },
-      p2score = App.templates.score(p2data);
+  var p1score = App.templates.score(player1.scoreData()),
+      p2score = App.templates.score(player2.scoreData());
 
   $('#p1score').html(p1score);
   $('#p2score').html(p2score);
@@ -232,7 +195,7 @@ function showCar(player, interactive, stat) {
   }
 
   // activate computer picking if playing against computer
-  if (gameType == 1 && game.currentPlayer == 'two' && interactive != 0) { computerChooseStat(); }
+  if (!game.twoPlayer && game.currentPlayer == 'two' && interactive != 0) { computerChooseStat(); }
 }
 
 function getURLParameter(name) {

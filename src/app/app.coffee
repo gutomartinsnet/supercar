@@ -7,21 +7,39 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY, without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
 # along with this program, if not, write to the Free Software
-# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 ###
 class App
   constructor: ->
     @flash = new Flash()
 
 class Game
+  ###
+  # @property carTimer
+  # @type {timer}
+  ###
+  @carTimer
+
+  ###
+  # @property compareTimer
+  # @type {timer}
+  ###
+  @compareTimer
+
+  # @param {String} nameOne - Player 1 Name
+  # @param {String} nameTwo - Player 2 Name
+  # @param {Boolean} twoPlayer - (true = 2 player, false = 1 player)
   constructor: (nameOne, nameTwo, twoPlayer) ->
     # Hold cars from both players before giving them to the winner
     @pot = []
+
+    # twoPlayer?
+    @twoPlayer = twoPlayer
 
     # Players
     @players =
@@ -77,6 +95,23 @@ class Game
     @players.one.cars = @cars.slice 0, half
     @players.two.cars = @cars.slice half, length
 
+  # Allocate cars after a round
+  allocateCars: (drawn) ->
+    if drawn
+      # Put current cards to back of the stack
+      @players.one.pushCar(@players.one.shiftCar())
+      @players.two.pushCar(@players.two.shiftCar())
+    else
+      # Take each players car and put them in the pot
+      @pot.push(@players.one.shiftCar())
+      @pot.push(@players.two.shiftCar())
+
+      # Reassign cars to the winner
+      @getCurrentPlayer().cars.push @pot...
+
+      # Clear the pot
+      @pot = []
+
 # Representation of a Player
 class Player
   constructor: (@name) ->
@@ -85,6 +120,17 @@ class Player
 
   currentCar: ->
     @cars[0]
+
+  scoreData: ->
+    name: @name
+    games: @score
+    cards: @cars.length
+
+  shiftCar: ->
+    @cars.shift()
+
+  pushCar: (car) ->
+    @cars.push(car)
 
 # Representation of the Computer
 class Computer extends Player
