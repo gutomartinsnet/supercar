@@ -14,15 +14,13 @@
 # along with this program, if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 ###
-class App
-  constructor: ->
-    @$arena = $('#arena')
+# Representation of a Car
+class Car
+  @stats = ["speed", "sixty", "power", "engine", "weight"]
+  @gt = ["speed", "power", "engine"]
+  @lt = ["sixty", "weight"]
 
-    @flash = new Flash()
-
-    @hash = window.location.hash
-
-    if @hash is '#game'
-      # Handle if page is refreshed
-    else
-      @intro = new Intro(this)
+  constructor: (data) ->
+    [ @image, @name, @country, @speed,
+      @tenSixty, @power, @engine, @weight] = data
+    @sixty = @tenSixty / 10

@@ -1,13 +1,15 @@
 <div id="intro" class="intro">
   <p>Supercar Top Trumps is a 1 or 2 player game. Each car has 5 statistics for a supercar - top speed, 0-60 time, power output, engine capacity and weight.</p>
-  <p>
-    <label for="player1">Enter the 1st player's name</label>
-    <input type="text" name="player1" id="p1name" size="12" value="Player 1" >
-    <input value="Play against computer" id="player1" type="button">
-  </p>
-  <p>
-    <label for="player2">Enter the 2nd player's name</label>
-    <input type="text" name="player2" id="p2name"  size="12" value="" >
-    <input value="Play another opponent" id="player2" type="button">
-  </p>
+  <form action="#">
+    <div class="player">
+      <label for="player1">Enter the 1st player's name</label>
+      <input type="text" name="player1" id="player1" size="12" value="Player 1" >
+      <input value="Play against computer" type="button" class="oneplayer">
+    </div>
+    <div class="player">
+      <label for="player2">Enter the 2nd player's name</label>
+      <input type="text" name="player2" id="player2"  size="12" value="" >
+      <input value="Play another opponent" type="button" class="twoplayer">
+    </div>
+  </form>
 </div>

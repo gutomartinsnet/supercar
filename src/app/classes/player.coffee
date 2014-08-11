@@ -14,15 +14,22 @@
 # along with this program, if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 ###
-class App
-  constructor: ->
-    @$arena = $('#arena')
+# Representation of a Player
+class Player
+  constructor: (@name) ->
+    @cars = []
+    @score = 0
 
-    @flash = new Flash()
+  currentCar: ->
+    @cars[0]
 
-    @hash = window.location.hash
+  scoreData: ->
+    name: @name
+    games: @score
+    cards: @cars.length
 
-    if @hash is '#game'
-      # Handle if page is refreshed
-    else
-      @intro = new Intro(this)
+  shiftCar: ->
+    @cars.shift()
+
+  pushCar: (car) ->
+    @cars.push(car)

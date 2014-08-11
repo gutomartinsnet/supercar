@@ -16,34 +16,15 @@
  */
 
 // Set up Game variables from Params passed in URL
-var gameType = getURLParameter('g'),
-    p1name = getURLParameter('p1'),
-    p2name = getURLParameter('p2');
-
-var app, game;
+var app;
 
 $(document).ready(function() {
-  if (!$('.game')) {
-    // Return early if this is not the game page
-    return;
-  }
-  
-  // gameType = 1 for 1 player, 2 for two player
-  var twoPlayer = (gameType == 2);
-
   app = new App();
-  game = new Game(p1name, p2name, twoPlayer);
-
-  setupGame();
-
-  $('.card').on('click', '.stat', null, function() {
-    chooseStat($(this).attr('id'));
-  });
 });
 
-function compareCars(stat) {
-  var carA = game.getPlayer('one').currentCar(),
-      carB = game.getPlayer('two').currentCar(),
+Game.prototype.compareCars = function(stat) {
+  var carA = this.getPlayer('one').currentCar(),
+      carB = this.getPlayer('two').currentCar(),
       drawn = false,
       text = '';
 
@@ -55,72 +36,84 @@ function compareCars(stat) {
     text = "<p>Draw</p>";
   } else {
     if (result === carA) {
-      game.currentPlayer = 'one';
+      this.currentPlayer = 'one';
       text = '<p class="left">Player 1 Wins</p>';
     } else {
-      game.currentPlayer = 'two';
+      this.currentPlayer = 'two';
       text = '<p class="right">Player 2 Wins</p>';
     }
   }
 
   // allocate the cars (to the winner, or if a draw, then stick the car at the back)
-  game.allocateCars(drawn);
+  this.allocateCars(drawn);
 
-  app.flash.set(text);
-  setTimeout('updateScore()', 2500);
+  scope = this;
+  this.app.flash.set(text);
+  setTimeout(function() {
+    scope.updateScore();
+  }, 2500);
 }
 
-function chooseStat(stat) {
-  if (game.currentPlayer == 'one') {
-    showCar(1, 0, stat);
+Game.prototype.setupGame = function() {
+  var scope = this;
+
+  $('.card').on('click', '.stat', null, function() {
+    scope.chooseStat($(this).attr('id'));
+  });
+
+  this.updateScore(); // initialise scores
+
+  if (!this.twoPlayer) { clearTimeout(Game.carTimer); clearTimeout(Game.compareTimer); }
+
+  if (this.currentPlayer == 'one') {
+    // Show P1's Card, Hide P2's Card
+    this.showCar(1,1,"");
+    this.showBlank(2);
+  } else {
+    // Show P2's Card, Hide P1's Card
+    if (this.twoPlayer) {
+      this.showCar(2,1,"");
+    } else {
+      this.showCar(2,0,""); // don't want interactive links for the computers turn! duh!
+    }
+    this.showBlank(1);
+  }
+}
+
+Game.prototype.chooseStat = function(stat) {
+  var scope = this;
+
+  if (this.currentPlayer == 'one') {
+    this.showCar(1, 0, stat);
     Game.carTimer = setTimeout(function() {
-      showCar(2, 0, arguments[0]);
+      scope.showCar(2, 0, arguments[0]);
     }, 500, stat);
   } else {
-    showCar(2,0,stat);
+    this.showCar(2,0,stat);
     Game.carTimer = setTimeout(function() {
-      showCar(1, 0, arguments[0]);
+      scope.showCar(1, 0, arguments[0]);
     }, 500, stat);
   }
   Game.compareTimer = setTimeout(function() {
-    compareCars(arguments[0]);
+    scope.compareCars(arguments[0]);
   }, 1500, stat);
 }
 
-function computerChooseStat() {
-  var computer = game.getPlayer('two'),
-      chosen = computer.chooseStat();
+Game.prototype.computerChooseStat = function() {
+  var computer = this.getPlayer('two'),
+      chosen = computer.chooseStat(),
+      scope = this;
 
   setTimeout(function() {
-    chooseStat(arguments[0]);
+    scope.chooseStat(arguments[0]);
   }, 1000, chosen);
 };
 
-function setupGame() {
-  updateScore(); // initialise scores
+Game.prototype.updateScore = function() {
+  var player1 = this.getPlayer('one'),
+      player2 = this.getPlayer('two');
 
-  if (!game.twoPlayer) { clearTimeout(Game.carTimer); clearTimeout(Game.compareTimer); }
-
-  if (game.currentPlayer == 'one') {
-    // Show P1's Card, Hide P2's Card
-    showCar(1,1,"");
-    showBlank(2);
-  } else {
-    // Show P2's Card, Hide P1's Card
-    if (game.twoPlayer) {
-      showCar(2,1,"");
-    } else {
-      showCar(2,0,""); // don't want interactive links for the computers turn! duh!
-    }
-    showBlank(1);
-  }
-}
-
-function updateScore() {
-  var player1 = game.getPlayer('one'),
-      player2 = game.getPlayer('two');
-
-  app.flash.clear(); // clear status
+  this.app.flash.clear(); // clear status
 
   var p1score = App.templates.score(player1.scoreData()),
       p2score = App.templates.score(player2.scoreData());
@@ -132,37 +125,39 @@ function updateScore() {
     // player 2 wins & player 1 loses
     player2.score++;
     if (confirm(player2.name + " has won this game. Do you want to play again?")) {
-      setupGame();
+      this.setupGame();
     } else {
-      location.href = "index.html";
+      window.location.hash = ''
+      window.location.reload()
     }
 
   } else if (player2.cars.length == 0) {
     // player 1 wins & player 2 loses
     player1.score++;
     if (confirm(player1.name + " has won this game. Do you want to play again?")) {
-      setupGame();
+      this.setupGame();
     } else {
-      location.href = "index.html";
+      window.location.hash = ''
+      window.location.reload()
     }
   } else {
     // still continue playing :)
   }
 
-  if (game.currentPlayer == 'one') {
+  if (this.currentPlayer == 'one') {
     // Player 1's Turn
     // Show P1's Card, Hide P2's Card
-    showCar(1,1,"");
-    showBlank(2);
-  } else if (game.currentPlayer == 'two') {
+    this.showCar(1,1,"");
+    this.showBlank(2);
+  } else if (this.currentPlayer == 'two') {
     // Player 2's Turn
     // Show P2's Card, Hide P1's Card
-    showCar(2,1,"");
-    showBlank(1);
+    this.showCar(2,1,"");
+    this.showBlank(1);
   }
 }
 
-function showBlank(player) {
+Game.prototype.showBlank = function(player) {
   blank  = App.templates.card({blank: true});
 
   if (player == 1) {
@@ -172,9 +167,9 @@ function showBlank(player) {
   }
 }
 
-function showCar(player, interactive, stat) {
-  var player1 = game.getPlayer('one'),
-      player2 = game.getPlayer('two');
+Game.prototype.showCar = function(player, interactive, stat) {
+  var player1 = this.getPlayer('one'),
+      player2 = this.getPlayer('two');
   var car = player1.cars[0];
 
   if (player != 1) {
@@ -185,7 +180,7 @@ function showCar(player, interactive, stat) {
   if (stat != "") {
     classes[stat] = 'selected';
   }
-  var data = { car: car, country: game.countries[car.country], interactive: interactive, classes: classes },
+  var data = { car: car, country: this.countries[car.country], interactive: interactive, classes: classes },
       card  = App.templates.card(data);
 
   if (player == 1) {
@@ -195,12 +190,5 @@ function showCar(player, interactive, stat) {
   }
 
   // activate computer picking if playing against computer
-  if (!game.twoPlayer && game.currentPlayer == 'two' && interactive != 0) { computerChooseStat(); }
-}
-
-function getURLParameter(name) {
-  // getURLParameter Code from: http://stackoverflow.com/questions/1403888/get-url-parameter-with-jquery
-  return decodeURI(
-      (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
-  );
+  if (!this.twoPlayer && this.currentPlayer == 'two' && interactive != 0) { this.computerChooseStat(); }
 }

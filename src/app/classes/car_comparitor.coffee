@@ -14,15 +14,16 @@
 # along with this program, if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 ###
-class App
-  constructor: ->
-    @$arena = $('#arena')
+# CarComparitor
+class CarComparitor
+  constructor: (@carA, @carB) ->
 
-    @flash = new Flash()
+  compare: (stat) ->
+    return false if @carA[stat] is @carB[stat]
 
-    @hash = window.location.hash
+    if stat in Car.gt
+      return @carB if @carB[stat] > @carA[stat]
+    else if stat in Car.lt
+      return @carB if @carB[stat] < @carA[stat]
 
-    if @hash is '#game'
-      # Handle if page is refreshed
-    else
-      @intro = new Intro(this)
+    @carA

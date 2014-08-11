@@ -50,13 +50,3 @@ Game.carData = [
   [ "155", "Subaru Impreza WR1",     "130", 155, 45, 316, 1994, 1470 ],
   [ "160", "TVR Tuscan S",           "100", 185, 38, 400, 3996, 1100 ]
 ]
-
-# Image, Name
-Game.countryData = [
-  [ "100", "GB"      ],
-  [ "110", "GERMANY" ],
-  [ "120", "ITALY"   ],
-  [ "130", "JAPAN"   ],
-  [ "140", "SWEDEN"  ],
-  [ "150", "USA"     ],
-]

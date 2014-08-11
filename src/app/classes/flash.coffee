@@ -14,15 +14,13 @@
 # along with this program, if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 ###
-class App
+# Flash
+class Flash
   constructor: ->
-    @$arena = $('#arena')
+    @$html = $('#flash')
 
-    @flash = new Flash()
+  clear: ->
+    @set()
 
-    @hash = window.location.hash
-
-    if @hash is '#game'
-      # Handle if page is refreshed
-    else
-      @intro = new Intro(this)
+  set: (msg = '') ->
+    @$html.html msg

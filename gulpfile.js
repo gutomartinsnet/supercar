@@ -15,9 +15,33 @@ var gulp    = require('gulp'),
     handle  = require('gulp-handlebars'),
     define  = require('gulp-define-module');
 
+var paths = {
+  app: [
+    'src/app/support/*.coffee',
+    'src/app/classes/player.coffee',
+    'src/app/classes/computer.coffee',
+    'src/app/classes/*.coffee',
+    'src/app/data/*.coffee',
+    'src/app/**/*.coffee'
+  ],
+  support: [
+    'src/js/**/*.js'
+  ],
+  html: 'src/**/*.html',
+  tests: 'spec/**/*.js',
+  images: 'src/images/**/*',
+  styles: 'src/sass/*.scss',
+  templates: 'src/app/templates/**/*.hbs',
+  clean: [
+    'build/assets/css',
+    'build/assets/js',
+    'build/assets/images'
+  ]
+};
+
 // Compile sass files
 gulp.task('styles', function() {
-  return gulp.src('src/sass/*.scss')
+  return gulp.src(paths.styles)
     .pipe(sass( { style: 'expanded' } ))
     .pipe(concat("styles.css"))
     .pipe(mincss())
@@ -28,44 +52,44 @@ gulp.task('styles', function() {
 
 // Copy html into build folder.
 gulp.task('html', function() {
-  gulp.src('src/**/*.html')
+  gulp.src(paths.html)
     .pipe(gulp.dest('build/'))
     .pipe(notify({message: "HTML task complete"}));
 });
 
 // Copy images into build folder.
 gulp.task('images', function() {
-  return gulp.src('src/images/**/*')
+  return gulp.src(paths.images)
     .pipe(gulp.dest('build/assets/images'))
     .pipe(notify({ message: 'Images task complete' }));
 });
 
-// Compile legacy js files
+// Compile support js files
 gulp.task('js', function() {
-  gulp.src('src/js/**/*.js')
+  gulp.src(paths.support)
     .pipe(concat('support.js'))
     .pipe(rename({suffix: '.min'}))
-    .pipe(uglify())
+    // .pipe(uglify())
     .pipe(gulp.dest('build/assets/js'))
     .pipe(notify({message: "Scripts task complete"}));
 });
 
 // Compile coffeescript files
 gulp.task('coffee', function() {
-  gulp.src('src/app/**/*.coffee')
+  gulp.src(paths.app)
     .pipe(cslint())
     .pipe(cslint.reporter())
     .pipe(coffee({bare: true}).on('error', gutil.log))
     .pipe(concat('main.js'))
     .pipe(rename({suffix: '.min'}))
-    .pipe(uglify())
+    // .pipe(uglify())
     .pipe(gulp.dest('build/assets/js'))
     .pipe(notify({message: "Scripts task complete"}));
 });
 
 // Precompile Handlebar Templates
 gulp.task('templates', function(){
-  gulp.src('src/app/templates/**/*.hbs')
+  gulp.src(paths.templates)
     .pipe(handle())
     .pipe(define('plain'))
     .pipe(declare({
@@ -79,24 +103,24 @@ gulp.task('templates', function(){
 
 // Clean the build folder out
 gulp.task('clean', function() {
-  return gulp.src(['build/assets/css', 'build/assets/js', 'build/assets/images'], {read: false})
+  return gulp.src(paths.clean, {read: false})
     .pipe(clean());
 });
 
 // Run tests
 gulp.task('tests', function() {
-  gulp.src('spec/**/*.js')
+  gulp.src(paths.tests)
     .pipe(jasmine());
 });
 
 // Watch for changes
 gulp.task('watch', function() {
-  gulp.watch('src/app/templates/**/*.hbs', ['templates', 'tests']);
-  gulp.watch('src/js/**/*.js', ['js', 'tests']);
-  gulp.watch('src/app/**/*.coffee', ['coffee', 'tests']);
-  gulp.watch('src/images/**/*', ['images']);
-  gulp.watch('src/**/*.html', ['html']);
-  gulp.watch('src/sass/*.scss', ['styles']);
+  gulp.watch(paths.app, ['coffee', 'tests']);
+  gulp.watch(paths.html, ['html']);
+  gulp.watch(paths.images, ['images']);
+  gulp.watch(paths.styles, ['styles']);
+  gulp.watch(paths.support, ['js', 'tests']);
+  gulp.watch(paths.templates, ['templates', 'tests']);
 });
 
 // Default build
