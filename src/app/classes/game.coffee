@@ -47,7 +47,7 @@ class Game
 
     # Players
     @players =
-      one: new Player(nameOne)
+      one: new Player(this, nameOne, 'one')
       two: @initPlayerTwo(twoPlayer, nameTwo)
 
     # All Cars
@@ -67,8 +67,8 @@ class Game
 
   # Init player 2
   initPlayerTwo: (twoPlayer, nameTwo) ->
-    return new Player(nameTwo) if twoPlayer
-    new Computer(nameTwo)
+    return new Player(this, nameTwo, 'two') if twoPlayer
+    new Computer(this, nameTwo, 'two')
 
   # Get a player (one or two)
   getPlayer: (which) ->
@@ -119,3 +119,33 @@ class Game
       # Clear the pot
       @pot = []
 
+  # Hide card not in play
+  showBlank: ->
+    if @currentPlayer is 'one'
+      @players.two.hideCard()
+    else
+      @players.one.hideCard()
+
+  # Setup Game
+  setupGame: ->
+    scope = this
+
+    $('.card').on 'click', '.stat', ->
+      scope.chooseStat $(this).prop('id')
+
+    # initialise scores
+    @updateScore()
+
+    unless @twoPlayer
+      clearTimeout @constructor.carTimer
+      clearTimeout @constructor.compareTimer
+
+    if @currentPlayer is 'one'
+      # Show P1's Card, Hide P2's Card
+      @players.one.showCard()
+    else
+      # Show P2's Card, Hide P1's Card
+      # If not two player, don't want interactive card
+      @players.two.showCard(@twoPlayer)
+
+    @showBlank()

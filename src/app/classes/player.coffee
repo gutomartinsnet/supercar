@@ -16,9 +16,10 @@
 ###
 # Representation of a Player
 class Player
-  constructor: (@name) ->
+  constructor: (@game, @name, @id) ->
     @cars = []
     @score = 0
+    @$card = $(".card##{@id}")
 
   currentCar: ->
     @cars[0]
@@ -33,3 +34,32 @@ class Player
 
   pushCar: (car) ->
     @cars.push(car)
+
+  hideCard: ->
+    @$card.html ''
+
+  showCard: (interactive = true, selected = '') ->
+    classes =
+      speed: ''
+      sixty: ''
+      power: ''
+      engine: ''
+      weight: ''
+
+    classes[selected] = 'selected' unless selected is ''
+
+    car = @currentCar()
+
+    data =
+      car: car
+      country: @game.countries[car.country]
+      interactive: interactive
+      classes: classes
+
+    @$card.html App.templates.card(data)
+
+    return if @game.twoPlayer
+    return unless @game.currentPlayer is 'two'
+    return unless interactive
+
+    @game.computerChooseStat()

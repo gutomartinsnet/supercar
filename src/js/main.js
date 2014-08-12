@@ -54,44 +54,18 @@ Game.prototype.compareCars = function(stat) {
   }, 2500);
 }
 
-Game.prototype.setupGame = function() {
-  var scope = this;
-
-  $('.card').on('click', '.stat', null, function() {
-    scope.chooseStat($(this).attr('id'));
-  });
-
-  this.updateScore(); // initialise scores
-
-  if (!this.twoPlayer) { clearTimeout(Game.carTimer); clearTimeout(Game.compareTimer); }
-
-  if (this.currentPlayer == 'one') {
-    // Show P1's Card, Hide P2's Card
-    this.showCar(1,1,"");
-    this.showBlank(2);
-  } else {
-    // Show P2's Card, Hide P1's Card
-    if (this.twoPlayer) {
-      this.showCar(2,1,"");
-    } else {
-      this.showCar(2,0,""); // don't want interactive links for the computers turn! duh!
-    }
-    this.showBlank(1);
-  }
-}
-
 Game.prototype.chooseStat = function(stat) {
   var scope = this;
 
   if (this.currentPlayer == 'one') {
-    this.showCar(1, 0, stat);
+    this.players.one.showCard(false, stat);
     Game.carTimer = setTimeout(function() {
-      scope.showCar(2, 0, arguments[0]);
+      scope.players.two.showCard(false, arguments[0]);
     }, 500, stat);
   } else {
-    this.showCar(2,0,stat);
+    this.players.two.showCard(false, stat);
     Game.carTimer = setTimeout(function() {
-      scope.showCar(1, 0, arguments[0]);
+      scope.players.one.showCard(false, arguments[0]);
     }, 500, stat);
   }
   Game.compareTimer = setTimeout(function() {
@@ -147,48 +121,12 @@ Game.prototype.updateScore = function() {
   if (this.currentPlayer == 'one') {
     // Player 1's Turn
     // Show P1's Card, Hide P2's Card
-    this.showCar(1,1,"");
-    this.showBlank(2);
+    this.players.one.showCard();
+    this.showBlank();
   } else if (this.currentPlayer == 'two') {
     // Player 2's Turn
     // Show P2's Card, Hide P1's Card
-    this.showCar(2,1,"");
-    this.showBlank(1);
+    this.players.two.showCard();
+    this.showBlank();
   }
-}
-
-Game.prototype.showBlank = function(player) {
-  blank  = App.templates.card({blank: true});
-
-  if (player == 1) {
-    $('#p1card').html(blank);
-  } else {
-    $('#p2card').html(blank);
-  }
-}
-
-Game.prototype.showCar = function(player, interactive, stat) {
-  var player1 = this.getPlayer('one'),
-      player2 = this.getPlayer('two');
-  var car = player1.cars[0];
-
-  if (player != 1) {
-    car = player2.cars[0];
-  }
-
-  var classes = { speed:'', sixty:'', power:'', engine:'', weight:'' };
-  if (stat != "") {
-    classes[stat] = 'selected';
-  }
-  var data = { car: car, country: this.countries[car.country], interactive: interactive, classes: classes },
-      card  = App.templates.card(data);
-
-  if (player == 1) {
-    $('#p1card').html(card);
-  } else {
-    $('#p2card').html(card);
-  }
-
-  // activate computer picking if playing against computer
-  if (!this.twoPlayer && this.currentPlayer == 'two' && interactive != 0) { this.computerChooseStat(); }
 }

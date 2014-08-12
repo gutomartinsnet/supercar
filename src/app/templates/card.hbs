@@ -1,32 +1,30 @@
-{{#unless blank}}
-  <div class="country">
-    <img src="assets/images/flags/{{country.image}}.png" alt="{{country.name}}" />
-  </div>
-  <h2>{{ car.name }}</h2>
-  <img src="assets/images/cars/{{car.image}}.png" alt="{{car.name}}" />
-  <dl>
-    {{#if interactive}}
-      <dt><a id="speed" class="stat">Top Speed</a></dt>
-      <dd><a id="speed" class="stat">{{car.speed}} mph</a></dd>
-      <dt><a id="sixty" class="stat">0 - 60 mph</a></dt>
-      <dd><a id="sixty" class="stat">{{car.sixty}} sec</a></dd>
-      <dt><a id="power" class="stat">Power</a></dt>
-      <dd><a id="power" class="stat">{{car.power}} bhp</a></dd>
-      <dt><a id="engine" class="stat">Capacity</a></dt>
-      <dd><a id="engine" class="stat">{{car.engine}} cc</a></dd>
-      <dt><a id="weight" class="stat">Weight</a></dt>
-      <dd><a id="weight" class="stat">{{car.weight}} Kg</a></dd>
-    {{else}}
-      <dt class="{{ classes.speed }}">Top Speed</dt>
-      <dd class="{{ classes.speed }}">{{car.speed}} mph</dd>
-      <dt class="{{ classes.sixty }}">0 - 60 mph</dt>
-      <dd class="{{ classes.sixty }}">{{car.sixty}} sec</dd>
-      <dt class="{{ classes.power }}">Power</dt>
-      <dd class="{{ classes.power }}">{{car.power}} bhp</dd>
-      <dt class="{{ classes.engine }}">Capacity</dt>
-      <dd class="{{ classes.engine }}">{{car.engine}} cc</dd>
-      <dt class="{{ classes.weight }}">Weight</dt>
-      <dd class="{{ classes.weight }}">{{car.weight}} Kg</dd>
-    {{/if}}
-  </dl>
-{{/unless}}
+<div class="country">
+  <img src="assets/images/flags/{{country.image}}.png" alt="{{country.name}}" />
+</div>
+<h2>{{ car.name }}</h2>
+<img src="assets/images/cars/{{car.image}}.png" alt="{{car.name}}" />
+<dl>
+  {{#if interactive}}
+    <dt><a id="speed" class="stat">Top Speed</a></dt>
+    <dd><a id="speed" class="stat">{{car.speed}} mph</a></dd>
+    <dt><a id="sixty" class="stat">0 - 60 mph</a></dt>
+    <dd><a id="sixty" class="stat">{{car.sixty}} sec</a></dd>
+    <dt><a id="power" class="stat">Power</a></dt>
+    <dd><a id="power" class="stat">{{car.power}} bhp</a></dd>
+    <dt><a id="engine" class="stat">Capacity</a></dt>
+    <dd><a id="engine" class="stat">{{car.engine}} cc</a></dd>
+    <dt><a id="weight" class="stat">Weight</a></dt>
+    <dd><a id="weight" class="stat">{{car.weight}} Kg</a></dd>
+  {{else}}
+    <dt class="{{ classes.speed }}">Top Speed</dt>
+    <dd class="{{ classes.speed }}">{{car.speed}} mph</dd>
+    <dt class="{{ classes.sixty }}">0 - 60 mph</dt>
+    <dd class="{{ classes.sixty }}">{{car.sixty}} sec</dd>
+    <dt class="{{ classes.power }}">Power</dt>
+    <dd class="{{ classes.power }}">{{car.power}} bhp</dd>
+    <dt class="{{ classes.engine }}">Capacity</dt>
+    <dd class="{{ classes.engine }}">{{car.engine}} cc</dd>
+    <dt class="{{ classes.weight }}">Weight</dt>
+    <dd class="{{ classes.weight }}">{{car.weight}} Kg</dd>
+  {{/if}}
+</dl>
