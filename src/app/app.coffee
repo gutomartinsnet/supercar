@@ -26,3 +26,6 @@ class App
       # Handle if page is refreshed
     else
       @intro = new Intro(this)
+
+$(document).ready ->
+  new App()

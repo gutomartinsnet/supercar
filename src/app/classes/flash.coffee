@@ -22,5 +22,6 @@ class Flash
   clear: ->
     @set()
 
-  set: (msg = '') ->
-    @$html.html msg
+  set: (data = {}) ->
+    text = App.templates.flash data
+    @$html.html text

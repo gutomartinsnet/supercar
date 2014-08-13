@@ -43,7 +43,7 @@ class Computer extends Player
     stats[random]
 
   # Choose stat
-  chooseStat: ->
+  choose: ->
     [best, ok, random] = [@bestStat(), @okStat(), @randomStat()]
     return best if best
     return ok if ok

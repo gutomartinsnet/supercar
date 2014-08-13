@@ -19,7 +19,8 @@ class Player
   constructor: (@game, @name, @id) ->
     @cars = []
     @score = 0
-    @$card = $(".card##{@id}")
+    @$card = $(".card.#{@id}")
+    @$score = $(".score.#{@id}")
 
   currentCar: ->
     @cars[0]
@@ -29,6 +30,10 @@ class Player
     games: @score
     cards: @cars.length
 
+  updateScore: ->
+    score = App.templates.score @scoreData()
+    @$score.html(score)
+
   shiftCar: ->
     @cars.shift()
 
@@ -37,6 +42,10 @@ class Player
 
   hideCard: ->
     @$card.html ''
+
+  # have they lost? (0 cars left)
+  lost: ->
+    @cars.length == 0
 
   showCard: (interactive = true, selected = '') ->
     classes =
@@ -57,9 +66,3 @@ class Player
       classes: classes
 
     @$card.html App.templates.card(data)
-
-    return if @game.twoPlayer
-    return unless @game.currentPlayer is 'two'
-    return unless interactive
-
-    @game.computerChooseStat()

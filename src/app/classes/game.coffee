@@ -78,6 +78,10 @@ class Game
   getCurrentPlayer: ->
     @getPlayer(@currentPlayer)
 
+  # Set the current player
+  setCurrentPlayer: (player) ->
+    @currentPlayer = player
+
   # Get cars (shuffles the array too)
   getCars: ->
     cars = []
@@ -126,12 +130,116 @@ class Game
     else
       @players.one.hideCard()
 
+  # Check Computer
+  checkComputer: (interactive = true) ->
+    return if @twoPlayer
+    return unless @currentPlayer is 'two'
+    return unless interactive
+
+    chosen = @getCurrentPlayer().choose()
+
+    setTimeout =>
+      @handleStatChoice(chosen)
+    , 1000
+
+  # Handle chosing of a stat.
+  handleStatChoice: (stat) ->
+    @getCurrentPlayer().showCard false, stat
+    @checkComputer false
+
+    if @currentPlayer is 'one'
+      @delayShow @players.two, stat
+    else
+      @delayShow @players.one, stat
+
+    @delayCompare stat
+
+  # Compare Cars
+  compareCars: (stat) ->
+    carA = @players.one.currentCar()
+    carB = @players.two.currentCar()
+    draw = false
+
+    comparitor = new CarComparitor(carA, carB)
+    result = comparitor.compare(stat)
+
+    if result is false
+      draw = true
+      data =
+        text: "Draw"
+    else if result is carA
+      @setCurrentPlayer 'one'
+      data =
+        text: "Player 1 Wins"
+        class: "left"
+    else
+      @setCurrentPlayer 'two'
+      data =
+        text: "Player 2 Wins"
+        class: "right"
+
+    # Allocate cars (to winner, or if drawn to the back of the pack)
+    @allocateCars draw
+
+    @app.flash.set data
+
+    setTimeout =>
+      @updateScore()
+    , 2500
+
+  # Delay showCard
+  delayShow: (player, stat) ->
+    @constructor.carTimer = setTimeout =>
+      player.showCard false, stat
+      @checkComputer false
+    , 500
+
+  # Delay compare
+  delayCompare: (stat) ->
+    @constructor.compareTimer = setTimeout =>
+      @compareCars(stat)
+    , 1500
+
+  # Update Score
+  updateScore: ->
+    @app.flash.clear()
+
+    p1 = @players.one
+    p2 = @players.two
+
+    p1.updateScore()
+    p2.updateScore()
+
+    if p1.lost()
+      p2.score++
+      @prompt p2
+    else if p2.lost()
+      p1.score++
+      @prompt p1
+    else
+      @getCurrentPlayer().showCard()
+      @checkComputer()
+      @showBlank()
+
+  # Prompt another
+  prompt: (winner) ->
+    msg = "#{winner.name} has won this game. Do you want to play again?"
+    if confirm(msg)
+      @setupGame()
+    else
+      @endGame()
+
+  # End Game
+  endGame: ->
+    window.location.hash = ''
+    window.location.reload()
+
   # Setup Game
   setupGame: ->
     scope = this
 
     $('.card').on 'click', '.stat', ->
-      scope.chooseStat $(this).prop('id')
+      scope.handleStatChoice $(this).prop('id')
 
     # initialise scores
     @updateScore()
@@ -143,9 +251,11 @@ class Game
     if @currentPlayer is 'one'
       # Show P1's Card, Hide P2's Card
       @players.one.showCard()
+      @checkComputer()
     else
       # Show P2's Card, Hide P1's Card
       # If not two player, don't want interactive card
       @players.two.showCard(@twoPlayer)
+      @checkComputer(@twoPlayer)
 
     @showBlank()

@@ -49,7 +49,7 @@ class Intro
 
 
   prepareGame: (one, two, twoPlayer) ->
-    @app.game = new Game(app, one, two, twoPlayer)
+    @app.game = new Game(@app, one, two, twoPlayer)
   
   validateName: (name) ->
     name isnt '' and name.length <= 10
