@@ -18,29 +18,43 @@
 class Computer extends Player
   # Best stat
   bestStat: ->
-    car = @currentCar()
-    return "speed" if car.speed > 199
-    return "sixty" if car.tenSixty < 40
-    return "power" if car.power > 450
-    return "engine" if car.engine > 5000
-    return "weight" if car.weight < 1200
-    false
+    @pick @bestStats()
 
   # OK stat
   okStat: ->
+    @pick @okStats()
+
+  # Determine the best stats
+  bestStats: ->
     car = @currentCar()
-    return "speed" if car.speed > 180
-    return "sixty" if car.tenSixty < 46
-    return "power" if car.power > 350
-    return "engine" if car.engine > 4000
-    return "weight" if car.weight < 1350
-    false
+    stats = []
+    stats.push "speed" if car.speed > 199
+    stats.push "sixty" if car.tenSixty < 40
+    stats.push "power" if car.power > 450
+    stats.push "engine" if car.engine > 5000
+    stats.push "weight" if car.weight < 1200
+    stats
+
+  # Determine the OK stats
+  okStats: ->
+    car = @currentCar()
+    stats = []
+    stats.push "speed"  if car.speed > 180
+    stats.push "sixty" if car.tenSixty < 46
+    stats.push "power" if car.power > 350
+    stats.push "engine" if car.engine > 4000
+    stats.push "weight" if car.weight < 1350
+    stats
 
   # Random stat
   randomStat: ->
-    stats = Car.stats
-    random = Math.floor(Math.random() * stats.length)
-    stats[random]
+    @pick Car.stats
+
+  # Pick random
+  pick: (choices) ->
+    return false unless choices.length > 0
+    choices = _shuffle(choices)
+    choices.pop()
 
   # Choose stat
   choose: ->
